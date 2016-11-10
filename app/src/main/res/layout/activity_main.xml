@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#c9c9c9">
+
+    <TextView
+        android:id="@+id/fileInfo"
+        android:background="#94ffffff"
+        android:textColor="#1b1919"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
+    <LinearLayout
+        android:id="@+id/bottomPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom|end"
+        android:background="#94ffffff"
+        android:orientation="horizontal"
+        tools:ignore="HardcodedText">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_margin="3dp"
+            android:text="PICK"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="3dp"
+            android:layout_marginRight="3dp"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/isCrop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Need Crop"/>
+
+            <CheckBox
+                android:id="@+id/isCompress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Need Compress"/>
+
+        </LinearLayout>
+
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="3dp">
+
+            <RadioButton
+                android:id="@+id/returnFile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Return File Only"/>
+
+            <RadioButton
+                android:id="@+id/returnBitmap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Return Bitmap Only"/>
+
+            <RadioButton
+                android:id="@+id/returnBoth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Return Both"/>
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottomPanel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#94ffffff"
+        android:orientation="horizontal"
+        android:padding="3dp"
+        android:weightSum="3"
+        tools:ignore="HardcodedText">
+
+        <EditText
+            android:id="@+id/getWidth"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="Crop width"
+            android:inputType="number"/>
+
+        <EditText
+            android:id="@+id/getHeight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="Crop height"
+            android:inputType="number"/>
+
+        <EditText
+            android:id="@+id/getCompress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="Compress"
+            android:inputType="number"
+            android:maxLength="3"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

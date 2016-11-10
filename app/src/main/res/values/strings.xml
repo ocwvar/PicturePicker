@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">PicturePicker</string>
+
+    <string name="selector_from_Local">从本地图库选择</string>
+    <string name="selector_from_Camera">从照相机获取</string>
+
+    <string name="ERROR_TEXT_COMPRESS_FILED">压缩储存失败,无法返回带压缩请求的位图和文件.</string>
+    <string name="ERROR_TEXT_FILE_FILED">文件操作失败,请检查储存容量和应用权限.</string>
+    <string name="ERROR_TEXT_FILE_SAVE_FAILED">文件储存失败,无法返回结果.</string>
+    <string name="ERROR_TEXT_PIC_INCURRECT">获取到的图像异常,无法进行操作.</string>
+
+</resources>
