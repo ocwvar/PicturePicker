@@ -83,9 +83,9 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
     private final int REQUEST_LOCAL = 302;
     private final int REQUEST_CUT = 303;
     /**
-     * 临时使用的路径
+     * 临时使用的路径    必须保持有效性
      * <p>
-     * Temporary path
+     * Temporary path   MUST BE AVAILABLE
      */
     private final String TEMPSAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/temp.jpg";
     private final String TEMPSAVE_PATH2 = Environment.getExternalStorageDirectory().getPath() + "/temp2.jpg";
@@ -122,6 +122,12 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
     private boolean RETURN_FILE_ONLY = false;
     private boolean RETURN_BITMAP_ONLY = false;
     private boolean RETURN_BOTH = false;
+
+    /**
+     * 图像文件保存路径
+     * <p>
+     * The folder of file objects
+     */
     private String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/Picker/";
 
     @Override
