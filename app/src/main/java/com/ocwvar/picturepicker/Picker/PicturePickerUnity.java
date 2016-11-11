@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ocwvar.picturepicker.R;
 
@@ -99,6 +98,11 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
     String ERROR_TEXT_FILE_FILED;
     String ERROR_TEXT_FILE_SAVE_FAILED;
     String ERROR_TEXT_PIC_INCURRECT;
+    String ERROR_TEXT_BITMAP_TOOLAGER;
+    String ERROR_TEXT_CAMERA_NO_DATA;
+    String ERROR_TEXT_LOCAL_NO_DATA;
+    String ERROR_TEXT_ARG;
+    String ERROR_TEXT_UNKNOWN;
     /**
      * 显示的两个按钮
      */
@@ -121,7 +125,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getIntent() == null || getIntent().getExtras() == null) {
-            onFinalStep(null, null, "请求参数异常");
+            onFinalStep(null, null, ERROR_TEXT_ARG);
             return;
         } else {
             setTitle(null);
@@ -142,6 +146,11 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
         ERROR_TEXT_FILE_FILED = getString(R.string.ERROR_TEXT_FILE_FILED);
         ERROR_TEXT_FILE_SAVE_FAILED = getString(R.string.ERROR_TEXT_FILE_SAVE_FAILED);
         ERROR_TEXT_PIC_INCURRECT = getString(R.string.ERROR_TEXT_PIC_INCURRECT);
+        ERROR_TEXT_BITMAP_TOOLAGER = getString(R.string.ERROR_TEXT_BITMAP_TOOLAGER);
+        ERROR_TEXT_CAMERA_NO_DATA = getString(R.string.ERROR_TEXT_CAMERA_NO_DATA);
+        ERROR_TEXT_LOCAL_NO_DATA = getString(R.string.ERROR_TEXT_LOCAL_NO_DATA);
+        ERROR_TEXT_ARG = getString(R.string.ERROR_TEXT_ARG);
+        ERROR_TEXT_UNKNOWN = getString(R.string.ERROR_TEXT_UNKNOWN);
 
         fromLocal = (TextView) findViewById(R.id.picture_selector_fromLocal);
         fromCamera = (TextView) findViewById(R.id.picture_selector_fromCamera);
@@ -177,7 +186,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
                 handlePickFromCamera();
                 break;
             default:
-                onFinalStep(null, null, "未定义操作");
+                onFinalStep(null, null, ERROR_TEXT_UNKNOWN);
                 break;
         }
 
@@ -191,23 +200,38 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void onFinalStep(Bitmap bitmap, File file, String exceptionMessage) {
 
-        Intent result = new Intent();
+        final Intent result = new Intent();
+
+        //设置返回的Action 是成功或者失败状态
         if (!TextUtils.isEmpty(exceptionMessage)) {
             result.setAction(ACTION_FAILED);
         } else {
             result.setAction(ACTION_SUCCESS);
         }
 
-        result.putExtra(EXTRAS_BITMAP, bitmap);
-        result.putExtra(EXTRAS_FILE, file);
-        result.putExtra(EXTRAS_EXCEPTION, exceptionMessage);
+        //当Bitmap对象大于1Mb的时候不能使用Intent来传递
+        if (bitmap != null && bitmap.getByteCount() < 1024 * 1024) {
+            result.putExtra(EXTRAS_BITMAP, bitmap);
+        } else if (bitmap != null) {
+            //不能传递的时候传递错误信息以及回收位图对象
+            if (TextUtils.isEmpty(exceptionMessage)) {
+                exceptionMessage = ERROR_TEXT_BITMAP_TOOLAGER;
+            }
+            bitmap.recycle();
+        }
 
+        //传递文件对象
+        result.putExtra(EXTRAS_FILE, file);
+        //传递错误信息
+        result.putExtra(EXTRAS_EXCEPTION, exceptionMessage);
+        //设置返回Intent
         setResult(100, result);
 
         //清除临时文件
         new File(TEMPSAVE_PATH).delete();
         new File(TEMPSAVE_PATH2).delete();
 
+        //结束页面,完成操作
         finish();
     }
 
@@ -256,7 +280,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 
         } else {
             //文件无效 , 操作失败
-            Toast.makeText(this, "无效照片文件 , 请检查储存空间是否已满", Toast.LENGTH_SHORT).show();
+            onFinalStep(null, null, ERROR_TEXT_CAMERA_NO_DATA);
         }
 
     }
@@ -271,14 +295,16 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             tempFile.createNewFile();
             Intent intent = new Intent(Intent.ACTION_PICK, null);
             intent.setType("image/*");
-            intent.putExtra("aspectX", 1);
-            intent.putExtra("aspectY", 1);
             if (NEED_CROP) {
                 intent.putExtra("crop", "true");
                 if (CROP_HEIGHT * CROP_WIDTH > 0) {
+                    intent.putExtra("aspectX", CROP_WIDTH);
+                    intent.putExtra("aspectY", CROP_HEIGHT);
                     intent.putExtra("outputX", CROP_WIDTH);
                     intent.putExtra("outputY", CROP_HEIGHT);
                 }
+            } else {
+                intent.putExtra("crop", "false");
             }
             intent.putExtra("return-data", true);
             intent.putExtra("scale", true);
@@ -287,8 +313,8 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
             startActivityForResult(intent, REQUEST_LOCAL);
         } catch (Exception e) {
-            onFinalStep(null, null, "请求参数异常");
             tempFile = null;
+            onFinalStep(null, null, ERROR_TEXT_ARG);
         }
     }
 
@@ -304,11 +330,11 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             tempFile.createNewFile();
             Intent intent = new Intent("com.android.camera.action.CROP");
             intent.setDataAndType(uri, "image/*");
-            intent.putExtra("aspectX", 1);
-            intent.putExtra("aspectY", 1);
             if (NEED_CROP) {
                 intent.putExtra("crop", "true");
                 if (CROP_HEIGHT * CROP_WIDTH > 0) {
+                    intent.putExtra("aspectX", CROP_WIDTH);
+                    intent.putExtra("aspectY", CROP_HEIGHT);
                     intent.putExtra("outputX", CROP_WIDTH);
                     intent.putExtra("outputY", CROP_HEIGHT);
                 }
@@ -320,8 +346,8 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
             startActivityForResult(intent, REQUEST_CUT);
         } catch (Exception e) {
-            Toast.makeText(this, ERROR_TEXT_PIC_INCURRECT, Toast.LENGTH_SHORT).show();
             tempFile = null;
+            onFinalStep(null, null, ERROR_TEXT_PIC_INCURRECT);
         }
     }
 
@@ -332,7 +358,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
      */
     private void handlePickFromLocal(Intent intent) {
         if (intent == null) {
-            onFinalStep(null, null, "图库无数据返回");
+            onFinalStep(null, null, ERROR_TEXT_LOCAL_NO_DATA);
         } else if (intent.getData() != null) {
             //从图库有返回一个 Uri 路径
 
@@ -364,7 +390,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
              */
             handleCompressAndSave(new File(TEMPSAVE_PATH), null);
         } else {
-            onFinalStep(null, null, "图库无数据返回");
+            onFinalStep(null, null, ERROR_TEXT_LOCAL_NO_DATA);
         }
     }
 
@@ -376,19 +402,19 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
      */
     private void handleCropFromPic(int resultCode, Intent intent) {
         if (resultCode == 0) {
-            onFinalStep(null, null, "图像剪裁失败,无数据返回");
+            onFinalStep(null, null, ERROR_TEXT_LOCAL_NO_DATA);
         } else if (!intent.hasExtra("data") && intent.getData() != null) {
             //返回来的是 Uri 路径 , 解析后直接加载即可 , 其文件路径为我们在请求Intent中设定的路径 TEMPSAVE_PATH2
             final Bitmap bitmap = BitmapFactory.decodeFile(TEMPSAVE_PATH2);
             if (bitmap != null) {
                 handleCompressAndSave(null, bitmap);
             } else {
-                onFinalStep(null, null, "图像剪裁失败,无数据返回");
+                onFinalStep(null, null, ERROR_TEXT_LOCAL_NO_DATA);
             }
         } else if (intent.hasExtra("data")) {
             handleCompressAndSave(null, (Bitmap) intent.getParcelableExtra("data"));
         } else {
-            onFinalStep(null, null, "图像剪裁失败,无数据返回");
+            onFinalStep(null, null, ERROR_TEXT_LOCAL_NO_DATA);
         }
     }
 
@@ -455,25 +481,30 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             } else {
                 //不需要压缩
                 try {
-                    //创建新文件
-                    saveFile.createNewFile();
-                    //创建输出流
-                    final FileOutputStream fileOutputStream = new FileOutputStream(saveFile, false);
 
                     if (RETURN_BITMAP_ONLY) {
                         //仅返回位图对象
                         onFinalStep(bitmap, null, null);
-                    } else if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)) {
-                        //保存成功
-                        if (RETURN_FILE_ONLY) {
-                            bitmap.recycle();
-                            onFinalStep(null, saveFile, null);
-                        } else {
-                            onFinalStep(bitmap, saveFile, null);
-                        }
                     } else {
-                        bitmap.recycle();
-                        onFinalStep(null, null, ERROR_TEXT_FILE_SAVE_FAILED);
+                        //否则就是需要图像文件的 位图+文件 或 仅文件
+
+                        //创建新文件
+                        saveFile.createNewFile();
+                        //创建输出流
+                        final FileOutputStream fileOutputStream = new FileOutputStream(saveFile, false);
+
+                        if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)) {
+                            //保存成功
+                            if (RETURN_FILE_ONLY) {
+                                bitmap.recycle();
+                                onFinalStep(null, saveFile, null);
+                            } else {
+                                onFinalStep(bitmap, saveFile, null);
+                            }
+                        } else {
+                            bitmap.recycle();
+                            onFinalStep(null, null, ERROR_TEXT_FILE_SAVE_FAILED);
+                        }
                     }
 
                 } catch (Exception e) {
@@ -514,7 +545,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
         }
 
         /**
-         * @param needCompress 是否需要图像压缩    0 ~ 100
+         * @param needCompress 是否需要图像压缩    0(最差画质) ~ 100(最好画质)
          * @return 构建器本身
          */
         public Builder needCompress(boolean needCompress) {
