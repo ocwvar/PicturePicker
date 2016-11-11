@@ -114,12 +114,15 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
      */
     private int CROP_WIDTH = 200;
     private int CROP_HEIGHT = 200;
+    private int CROP_WIDTH_RATION = 1;
+    private int CROP_HEIGHT_RATION = 1;
     private int COMPRESS_VALUE = 50;
     private boolean NEED_CROP = false;
     private boolean NEED_COMPRESS = false;
     private boolean RETURN_FILE_ONLY = false;
     private boolean RETURN_BITMAP_ONLY = false;
     private boolean RETURN_BOTH = false;
+    private String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/Picker/";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -158,6 +161,23 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
         fromLocal.setOnClickListener(this);
         fromCamera.setOnClickListener(this);
 
+        final int maxCommonDivisor = maxCommonDivisor(CROP_WIDTH, CROP_HEIGHT);
+        CROP_WIDTH_RATION = CROP_WIDTH / maxCommonDivisor;
+        CROP_HEIGHT_RATION = CROP_HEIGHT / maxCommonDivisor;
+
+    }
+
+    private int maxCommonDivisor(int width, int height) {
+        if (width < height) {// 保证m>n,若m<n,则进行数据交换
+            int temp = width;
+            width = height;
+            height = temp;
+        }
+        if (width % height == 0) {// 若余数为0,返回最大公约数
+            return height;
+        } else { // 否则,进行递归,把n赋给m,把余数赋给n
+            return maxCommonDivisor(height, width % height);
+        }
     }
 
     @Override
@@ -298,8 +318,8 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             if (NEED_CROP) {
                 intent.putExtra("crop", "true");
                 if (CROP_HEIGHT * CROP_WIDTH > 0) {
-                    intent.putExtra("aspectX", CROP_WIDTH);
-                    intent.putExtra("aspectY", CROP_HEIGHT);
+                    intent.putExtra("aspectX", CROP_WIDTH_RATION);
+                    intent.putExtra("aspectY", CROP_HEIGHT_RATION);
                     intent.putExtra("outputX", CROP_WIDTH);
                     intent.putExtra("outputY", CROP_HEIGHT);
                 }
@@ -333,8 +353,8 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             if (NEED_CROP) {
                 intent.putExtra("crop", "true");
                 if (CROP_HEIGHT * CROP_WIDTH > 0) {
-                    intent.putExtra("aspectX", CROP_WIDTH);
-                    intent.putExtra("aspectY", CROP_HEIGHT);
+                    intent.putExtra("aspectX", CROP_WIDTH_RATION);
+                    intent.putExtra("aspectY", CROP_HEIGHT_RATION);
                     intent.putExtra("outputX", CROP_WIDTH);
                     intent.putExtra("outputY", CROP_HEIGHT);
                 }
@@ -437,7 +457,9 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             //如果能获取到图像,则代表这个对象是可用的
 
             //储存最终文件的位置
-            final File saveFile = new File(Environment.getExternalStorageDirectory().getPath() + "/" + getRandomFileName());
+            File saveFile = new File(SAVE_PATH);
+            saveFile.mkdirs();
+            saveFile = new File(SAVE_PATH + getRandomFileName());
 
             if (NEED_COMPRESS) {
                 //如果需要压缩

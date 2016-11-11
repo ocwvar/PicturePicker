@@ -8,10 +8,11 @@
 
     <TextView
         android:id="@+id/fileInfo"
-        android:background="#94ffffff"
-        android:textColor="#1b1919"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:background="#94ffffff"
+        android:padding="5dp"
+        android:textColor="#ff0044"/>
 
     <ImageView
         android:id="@+id/imageView"
