@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ocwvar.picturepicker.R;
 
@@ -649,8 +650,9 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 
                 if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED || activity.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
 
-                    //如果系统版本为 Android 6.0+ ，同时应用的权限不完整，则一次性全部获取
+                    //如果系统版本为 Android 6.0+，同时应用的权限不完整，则一次性全部获取
                     activity.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 191919);
+                    Toast.makeText(activity, R.string.ERROR_TEXT_PERMISSION, Toast.LENGTH_SHORT).show();
                     return;
 
                 }

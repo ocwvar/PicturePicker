@@ -14,5 +14,6 @@
     <string name="ERROR_TEXT_LOCAL_NO_DATA">图库无数据返回.</string>
     <string name="ERROR_TEXT_ARG">请求参数异常.</string>
     <string name="ERROR_TEXT_UNKNOWN">未知的返回数据.</string>
+    <string name="ERROR_TEXT_PERMISSION">请先授予应用相应权限.</string>
 
 </resources>
