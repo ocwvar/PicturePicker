@@ -1,9 +1,11 @@
 package com.ocwvar.picturepicker.Picker;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -642,6 +644,19 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
          * @param requestCode 请求码
          */
         public void startPickerNow(Activity activity, int requestCode) {
+
+            if (Build.VERSION.SDK_INT >= 23) {
+
+                if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED || activity.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+
+                    //如果系统版本为 Android 6.0+ ，同时应用的权限不完整，则一次性全部获取
+                    activity.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 191919);
+                    return;
+
+                }
+
+            }
+
             if (arg_returnBitmap && arg_returnFile) {
                 arg_returnBoth = true;
                 arg_returnBitmap = false;
