@@ -3,6 +3,7 @@ package com.ocwvar.picturepicker.DemoActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setCompressValue(compressValue)
                 .setCropHeight(cropHeight)
                 .setCropWidth(cropWidth)
+                .setFileSavePath(Environment.getExternalStorageDirectory().getPath() + "/android/new.jpg")
                 .startPickerNow(MainActivity.this, 1001, 1002);
 
     }

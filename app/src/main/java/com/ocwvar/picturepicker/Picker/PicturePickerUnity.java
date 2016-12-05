@@ -139,6 +139,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
     private String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/Picker/";
 
     @Override
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getIntent() == null || getIntent().getExtras() == null) {
@@ -181,8 +182,19 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
         CROP_WIDTH_RATION = CROP_WIDTH / maxCommonDivisor;
         CROP_HEIGHT_RATION = CROP_HEIGHT / maxCommonDivisor;
 
+        //清除旧的临时文件
+        new File(TEMPSAVE_PATH).delete();
+        new File(TEMPSAVE_PATH2).delete();
+
     }
 
+    /**
+     * 计算最大公约数
+     *
+     * @param width  要裁剪的宽度
+     * @param height 要裁剪的高度
+     * @return 宽高之比
+     */
     private int maxCommonDivisor(int width, int height) {
         if (width < height) {// 保证m>n,若m<n,则进行数据交换
             int temp = width;
@@ -281,8 +293,9 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 
     /**
      * 移动文件到指定位置
-     * @param file  要移动的文件对象
-     * @param toPath    要移动到的位置，包括文件名称
+     *
+     * @param file   要移动的文件对象
+     * @param toPath 要移动到的位置，包括文件名称
      * @return 新的文件对象
      */
     private File moveFile2Folder(File file, String toPath) {
@@ -682,7 +695,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
         }
 
         /**
-         * @param path  保存File对象至指定路径（包括文件名名字）
+         * @param path 保存File对象至指定路径（包括文件名名字）
          * @return 构建器本身
          */
         public Builder setFileSavePath(String path) {
