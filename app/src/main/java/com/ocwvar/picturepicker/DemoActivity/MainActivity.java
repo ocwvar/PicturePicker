@@ -100,14 +100,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setCompressValue(compressValue)
                 .setCropHeight(cropHeight)
                 .setCropWidth(cropWidth)
-                .startPickerNow(MainActivity.this,8);
+                .startPickerNow(MainActivity.this, 1001, 1002);
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 8 && data != null) {
+        if (requestCode == 1001 && data != null) {
 
             if (data.getAction().equals(PicturePickerUnity.ACTION_SUCCESS)) {
 

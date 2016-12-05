@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -59,6 +60,8 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
     public static final String ARG_CROP_WIDTH = "ac7";
     //裁剪高度
     public static final String ARG_CROP_HEIGHT = "ac8";
+    //保存路径
+    public static final String ARG_SAVE_PATH = "ac9";
     /**
      * 结果参数字段
      * <p>
@@ -106,6 +109,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
     String ERROR_TEXT_LOCAL_NO_DATA;
     String ERROR_TEXT_ARG;
     String ERROR_TEXT_UNKNOWN;
+    String ERROR_TEXT_MOVEFAILED;
     /**
      * 显示的两个按钮
      */
@@ -125,6 +129,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
     private boolean RETURN_FILE_ONLY = false;
     private boolean RETURN_BITMAP_ONLY = false;
     private boolean RETURN_BOTH = false;
+    private String CUSTOM_SAVE_PATH = null;
 
     /**
      * 图像文件保存路径
@@ -150,6 +155,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             RETURN_BITMAP_ONLY = request.getBoolean(ARG_RETURN_BITMAP_ONLY, false);
             RETURN_FILE_ONLY = request.getBoolean(ARG_RETURN_FILE_ONLY, false);
             RETURN_BOTH = request.getBoolean(ARG_RETURN_BOTH, false);
+            CUSTOM_SAVE_PATH = request.getString(ARG_SAVE_PATH, null);
         }
 
         setContentView(R.layout.picture_select_unity);
@@ -163,6 +169,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
         ERROR_TEXT_LOCAL_NO_DATA = getString(R.string.ERROR_TEXT_LOCAL_NO_DATA);
         ERROR_TEXT_ARG = getString(R.string.ERROR_TEXT_ARG);
         ERROR_TEXT_UNKNOWN = getString(R.string.ERROR_TEXT_UNKNOWN);
+        ERROR_TEXT_MOVEFAILED = getString(R.string.ERROR_TEXT_MOVEFAILED);
 
         fromLocal = (TextView) findViewById(R.id.picture_selector_fromLocal);
         fromCamera = (TextView) findViewById(R.id.picture_selector_fromCamera);
@@ -249,6 +256,14 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             bitmap.recycle();
         }
 
+        //当文件对象需要移动到用户指定位置时
+        if (!TextUtils.isEmpty(CUSTOM_SAVE_PATH) && (RETURN_BOTH || RETURN_FILE_ONLY) && file != null) {
+            file = moveFile2Folder(file, CUSTOM_SAVE_PATH);
+            if (file == null) {
+                exceptionMessage = ERROR_TEXT_MOVEFAILED;
+            }
+        }
+
         //传递文件对象
         result.putExtra(EXTRAS_FILE, file);
         //传递错误信息
@@ -262,6 +277,29 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 
         //结束页面,完成操作
         finish();
+    }
+
+    /**
+     * 移动文件到指定位置
+     * @param file  要移动的文件对象
+     * @param toPath    要移动到的位置，包括文件名称
+     * @return 新的文件对象
+     */
+    private File moveFile2Folder(File file, String toPath) {
+        if (file == null || !file.exists() || TextUtils.isEmpty(toPath)) {
+            return null;
+        } else {
+            try {
+                final File targetFile = new File(toPath);
+                if (file.renameTo(targetFile)) {
+                    return targetFile;
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
 
     /**
@@ -279,8 +317,9 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
      * 启动摄像头获取图像
      */
     private void requestPickFromCamera() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(TEMPSAVE_PATH)));
+        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        final Uri uri = FileProvider.getUriForFile(PicturePickerUnity.this, "ocwvar", new File(TEMPSAVE_PATH));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, REQUEST_CAMERA);
     }
 
@@ -301,7 +340,8 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 
             if (NEED_CROP) {
                 //如果需要剪裁,则直接调到剪裁部分
-                cropImageFromURI(Uri.fromFile(savedFile));
+                final Uri uri = FileProvider.getUriForFile(PicturePickerUnity.this, "ocwvar", savedFile);
+                cropImageFromURI(uri);
             } else {
                 //如果不需要剪裁,则直接调到最后部分
                 handleCompressAndSave(savedFile, null);
@@ -339,7 +379,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             intent.putExtra("scale", true);
             intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
             intent.putExtra("noFaceDetection", true);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(PicturePickerUnity.this, "ocwvar", tempFile));
             startActivityForResult(intent, REQUEST_LOCAL);
         } catch (Exception e) {
             tempFile = null;
@@ -372,7 +412,8 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             }
             intent.putExtra("return-data", true);
             intent.putExtra("scale", true);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(PicturePickerUnity.this, "ocwvar", tempFile));
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             startActivityForResult(intent, REQUEST_CUT);
         } catch (Exception e) {
             tempFile = null;
@@ -566,6 +607,8 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
         private int arg_cropWidth = 200;
         private int arg_cropHeight = 200;
 
+        private String arg_savePath = null;
+
         /**
          * @param needCrop 是否需要剪裁
          * @return 构建器本身
@@ -639,19 +682,29 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
         }
 
         /**
+         * @param path  保存File对象至指定路径（包括文件名名字）
+         * @return 构建器本身
+         */
+        public Builder setFileSavePath(String path) {
+            arg_savePath = path;
+            return this;
+        }
+
+        /**
          * 启动图像选择器
          *
-         * @param activity context 对象
-         * @param requestCode 请求码
+         * @param activity              context 对象
+         * @param requestCode           请求码
+         * @param permissionRequestCode 权限请求码
          */
-        public void startPickerNow(Activity activity, int requestCode) {
+        public void startPickerNow(Activity activity, int requestCode, int permissionRequestCode) {
 
             if (Build.VERSION.SDK_INT >= 23) {
 
                 if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED || activity.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
 
                     //如果系统版本为 Android 6.0+，同时应用的权限不完整，则一次性全部获取
-                    activity.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 191919);
+                    activity.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, permissionRequestCode);
                     Toast.makeText(activity, R.string.ERROR_TEXT_PERMISSION, Toast.LENGTH_SHORT).show();
                     return;
 
@@ -682,9 +735,11 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
             request.putExtra(ARG_CROP_WIDTH, arg_cropWidth);
             request.putExtra(ARG_CROP_HEIGHT, arg_cropHeight);
 
+            request.putExtra(ARG_SAVE_PATH, arg_savePath);
+
             resetDefaultValues();
 
-            activity.startActivityForResult(request,requestCode);
+            activity.startActivityForResult(request, requestCode);
 
         }
 
