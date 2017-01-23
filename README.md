@@ -6,20 +6,20 @@ Use to pick a picture from local or camera with crop or compress
 ##
 
 #**使用方法 How to use**
-new PicturePickerUnity.Builder()
-				.needCompress( True / False )
-				.needCrop( True / False )
-				.returnBitmap( True / False )
-				.returnFile( True / False )
-				.returnBoth( True / False )
-				.setCompressValue( 0 ~ 100 )
-				.setCropHeight(cropHeight)
-				.setCropWidth(cropWidth)
-				.setFileSavePathAndName( savePath , fileName )
-        // By Activity 
-				.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
-        // By Fragment
-        .startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
+    new PicturePickerUnity.Builder()
+    	.needCompress( True / False )
+    	.needCrop( True / False )
+    	.returnBitmap( True / False )
+    	.returnFile( True / False )
+    	.returnBoth( True / False )
+    	.setCompressValue( 0 ~ 100 )
+    	.setCropHeight(cropHeight)
+    	.setCropWidth(cropWidth)
+    	.setFileSavePathAndName( savePath , fileName )
+    	// By Activity 
+    	.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
+    	// By Fragment
+    	.startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
 
 
 #**总览 Overview**
