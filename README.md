@@ -4,6 +4,31 @@ Use to pick a picture from local or camera with crop or compress
 
 可用于从本地图库或摄像头获取图片,同时还可以剪裁和压缩图片
 ##
+
+#**使用方法 How to use**
+>###请求 Request
+    new PicturePickerUnity.Builder()
+    	.needCompress( True / False )
+    	.needCrop( True / False )
+    	.returnBitmap( True / False )
+    	.returnFile( True / False )
+    	.returnBoth( True / False )
+    	.setCompressValue( 0 ~ 100 )
+    	.setCropHeight(cropHeight)
+    	.setCropWidth(cropWidth)
+    	.setFileSavePathAndName( savePath , fileName )
+    	// By Activity 
+    	.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
+    	// By Fragment
+    	.startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
+        
+>###获取结果 Get Result
+在 onActivityResult() 获取到返回的Intent来进行操作
+<p>
+Intent Action —— ACTION_SUCCESS / ACTION_FAILED
+<p>
+Intent Extras —— EXTRAS_BITMAP(Parcelable) / EXTRAS_FILE(Serializable) / EXTRAS_EXCEPTION(String)
+
 #**总览 Overview**
 
 **图片操作 Picture operation**
@@ -24,19 +49,12 @@ Use to pick a picture from local or camera with crop or compress
 
 **●** Because of the size limit in the Intent , **you will get NULL** when Bitmap object bigger than 1MB. The solution is return both of bitmap & file object , so you can get that bitmap from the file.
 
-##
 
-#**局限性 limitation (16/11/11 11:11)**
 
-1.在 targetSdkVersion / compileSdkVersion = 24 的环境下不能正常使用 Uri ,导致不能正常工作. 最高的环境版本为 
+#**注意**
+**目前已解决 BuildTools 25+ 以上版本拍照、拍照后编辑异常的问题。**但经测试发现，不是所有第三方拍照APP均兼容 BuildTools25+ 的URI权限新特性，所以需要使用自带相机来解决此问题。
 
-targetSdkVersion / compileSdkVersion = 23 , buildToolsVersion = 23.0.3
 
-1.Picker will not work under targetSdkVersion / compileSdkVersion = 24 , 
-
-please use targetSdkVersion / compileSdkVersion = 23 , buildToolsVersion = 23.0.3
-
-##
 
 #**自定义 Custom**
 
@@ -71,7 +89,7 @@ please use targetSdkVersion / compileSdkVersion = 23 , buildToolsVersion = 23.0.
 >File 文件储存文件夹
 >The folder of file objects
 
-##
+
 #**预览 Preview**
 
 由于GIF图像有28MB.. 所以预览不顺畅的时候可以直接下载根目录下的 Preview.gif 来看
