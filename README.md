@@ -49,12 +49,12 @@ Intent Extras —— EXTRAS_BITMAP(Parcelable) / EXTRAS_FILE(Serializable) / EXT
 
 **●** Because of the size limit in the Intent , **you will get NULL** when Bitmap object bigger than 1MB. The solution is return both of bitmap & file object , so you can get that bitmap from the file.
 
-##
+
 
 #**注意**
 **目前已解决 BuildTools 25+ 以上版本拍照、拍照后编辑异常的问题。**但经测试发现，不是所有第三方拍照APP均兼容 BuildTools25+ 的URI权限新特性，所以需要使用自带相机来解决此问题。
 
-##
+
 
 #**自定义 Custom**
 
@@ -89,7 +89,7 @@ Intent Extras —— EXTRAS_BITMAP(Parcelable) / EXTRAS_FILE(Serializable) / EXT
 >File 文件储存文件夹
 >The folder of file objects
 
-##
+
 #**预览 Preview**
 
 由于GIF图像有28MB.. 所以预览不顺畅的时候可以直接下载根目录下的 Preview.gif 来看
