@@ -6,6 +6,7 @@ Use to pick a picture from local or camera with crop or compress
 ##
 
 #**使用方法 How to use**
+>###请求 Request
     new PicturePickerUnity.Builder()
     	.needCompress( True / False )
     	.needCrop( True / False )
@@ -20,7 +21,13 @@ Use to pick a picture from local or camera with crop or compress
     	.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
     	// By Fragment
     	.startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
-
+        
+>###获取结果 Get Result
+在 onActivityResult() 获取到返回的Intent来进行操作
+<p>
+Intent Action —— ACTION_SUCCESS / ACTION_FAILED
+<p>
+Intent Extras —— EXTRAS_BITMAP(Parcelable) / EXTRAS_FILE(Serializable) / EXTRAS_EXCEPTION(String)
 
 #**总览 Overview**
 
