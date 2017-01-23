@@ -4,6 +4,24 @@ Use to pick a picture from local or camera with crop or compress
 
 可用于从本地图库或摄像头获取图片,同时还可以剪裁和压缩图片
 ##
+
+#**使用方法 How to use**
+new PicturePickerUnity.Builder()
+				.needCompress( True / False )
+				.needCrop( True / False )
+				.returnBitmap( True / False )
+				.returnFile( True / False )
+				.returnBoth( True / False )
+				.setCompressValue( 0 ~ 100 )
+				.setCropHeight(cropHeight)
+				.setCropWidth(cropWidth)
+				.setFileSavePathAndName( savePath , fileName )
+        // By Activity 
+				.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
+        // By Fragment
+        .startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
+
+
 #**总览 Overview**
 
 **图片操作 Picture operation**
