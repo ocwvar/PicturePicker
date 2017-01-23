@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView_current_level"
+        android:textColor="#ffffff"
+        android:background="#64ff0932"
+        android:padding="5dp"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:orientation="horizontal"
+        android:gravity="start|center">
+
+        <ImageButton
+            android:id="@+id/button_up_folder"
+            android:src="@drawable/ic_action_back"
+            android:background="@null"
+            android:layout_width="?actionBarSize"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/textView_up_folder_name"
+            android:textColor="#bfff0932"
+            android:textSize="16sp"
+            android:text="@string/TEXT_UP_FOLDER"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycleView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

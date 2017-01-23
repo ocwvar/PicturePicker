@@ -27,7 +27,7 @@
         <!--图片选择器的页面-->
         <!--Picture Picker Activity-->
         <activity android:name=".Picker.PicturePickerUnity"
-                  android:theme="@style/DialogTheme"/>
+                  android:theme="@style/AppTheme.NoActionBar"/>
 
         <!--FileProvider 权限申请-->
         <!--FileProvider Permission request-->

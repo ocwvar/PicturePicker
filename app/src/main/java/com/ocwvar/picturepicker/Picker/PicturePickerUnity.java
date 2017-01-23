@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
@@ -26,10 +27,11 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,7 @@ import com.ocwvar.picturepicker.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -47,7 +50,7 @@ import java.util.Random;
  * 图像选择工具
  */
 
-public class PicturePickerUnity extends AppCompatActivity implements View.OnClickListener {
+public class PicturePickerUnity extends AppCompatActivity implements FileObjectAdapter.OnFileItemClickCallback, Scanner.ScannerResultCallback, View.OnClickListener {
 
 	/**
 	 * 请求参数字段
@@ -55,25 +58,25 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 	 * Keys of request parameter
 	 */
 	//是否需要裁剪
-	public static final String ARG_NEED_CROP = "ac1";
+	private static final String ARG_NEED_CROP = "ac1";
 	//是否需要压缩
-	public static final String ARG_NEED_COMPRESS = "ac2";
+	private static final String ARG_NEED_COMPRESS = "ac2";
 	//只返回文件对象
-	public static final String ARG_RETURN_FILE_ONLY = "ac3";
+	private static final String ARG_RETURN_FILE_ONLY = "ac3";
 	//只返回位图对象
-	public static final String ARG_RETURN_BITMAP_ONLY = "ac4";
+	private static final String ARG_RETURN_BITMAP_ONLY = "ac4";
 	//返回位图和文件
-	public static final String ARG_RETURN_BOTH = "ac5";
+	private static final String ARG_RETURN_BOTH = "ac5";
 	//压缩比例
-	public static final String ARG_COMPRESS_VALUE = "ac6";
+	private static final String ARG_COMPRESS_VALUE = "ac6";
 	//裁剪宽度
-	public static final String ARG_CROP_WIDTH = "ac7";
+	private static final String ARG_CROP_WIDTH = "ac7";
 	//裁剪高度
-	public static final String ARG_CROP_HEIGHT = "ac8";
+	private static final String ARG_CROP_HEIGHT = "ac8";
 	//保存路径
-	public static final String ARG_SAVE_PATH = "ac9";
+	private static final String ARG_SAVE_PATH = "ac9";
 	//保存文件名称
-	public static final String ARG_SAVE_NAME = "ac10";
+	private static final String ARG_SAVE_NAME = "ac10";
 	/**
 	 * 结果参数字段
 	 * <p>
@@ -112,20 +115,17 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 	 * <p>
 	 * Text of exception
 	 */
-	String ERROR_TEXT_COMPRESS_FILED;
-	String ERROR_TEXT_FILE_FILED;
-	String ERROR_TEXT_FILE_SAVE_FAILED;
-	String ERROR_TEXT_PIC_INCURRECT;
-	String ERROR_TEXT_BITMAP_TOOLAGER;
-	String ERROR_TEXT_CAMERA_NO_DATA;
-	String ERROR_TEXT_LOCAL_NO_DATA;
-	String ERROR_TEXT_ARG;
-	String ERROR_TEXT_UNKNOWN;
-	String ERROR_TEXT_MOVEFAILED;
-	/**
-	 * 显示的两个按钮
-	 */
-	TextView fromLocal, fromCamera;
+	private String ERROR_TEXT_COMPRESS_FILED;
+	private String ERROR_TEXT_FILE_FILED;
+	private String ERROR_TEXT_FILE_SAVE_FAILED;
+	private String ERROR_TEXT_PIC_INCURRECT;
+	private String ERROR_TEXT_BITMAP_TOOLAGER;
+	private String ERROR_TEXT_CAMERA_NO_DATA;
+	private String ERROR_TEXT_LOCAL_NO_DATA;
+	private String ERROR_TEXT_ARG;
+	private String ERROR_TEXT_UNKNOWN;
+	private String ERROR_TEXT_MOVEFAILED;
+
 	/**
 	 * 操作参数
 	 * <p>
@@ -156,6 +156,31 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 	 */
 	private boolean needFixAngle = false;
 
+	/**
+	 * 显示当前界面的显示文字
+	 */
+	TextView currentLevelShower;
+
+	/**
+	 * 显示上一级文件夹名字
+	 */
+	TextView upLevelShower;
+
+	/**
+	 * 列表显示的适配器
+	 */
+	FileObjectAdapter adapter;
+
+	/**
+	 * 搜索器
+	 */
+	Scanner scanner;
+
+	/**
+	 * 路径管理器
+	 */
+	PathManager pathManager;
+
 	@Override
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -178,8 +203,6 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 			CUSTOM_SAVE_NAME = request.getString(ARG_SAVE_NAME, null);
 		}
 
-		setContentView(R.layout.picture_select_unity);
-
 		ERROR_TEXT_COMPRESS_FILED = getString(R.string.ERROR_TEXT_COMPRESS_FILED);
 		ERROR_TEXT_FILE_FILED = getString(R.string.ERROR_TEXT_FILE_FILED);
 		ERROR_TEXT_FILE_SAVE_FAILED = getString(R.string.ERROR_TEXT_FILE_SAVE_FAILED);
@@ -191,19 +214,27 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 		ERROR_TEXT_UNKNOWN = getString(R.string.ERROR_TEXT_UNKNOWN);
 		ERROR_TEXT_MOVEFAILED = getString(R.string.ERROR_TEXT_MOVEFAILED);
 
-		fromLocal = (TextView) findViewById(R.id.picture_selector_fromLocal);
-		fromCamera = (TextView) findViewById(R.id.picture_selector_fromCamera);
+		if (Build.VERSION.SDK_INT >= 21){
+			//设置状态栏和导航栏颜色
+			final Window window = getWindow();
+			window.setNavigationBarColor(Color.LTGRAY);
+			window.setStatusBarColor(Color.argb(100,255,9,50));
+		}
 
-		fromLocal.setOnClickListener(this);
-		fromCamera.setOnClickListener(this);
+		setContentView(R.layout.picture_select_buildint_gallery);
+		adapter = new FileObjectAdapter(this,getApplicationContext());
+		scanner = new Scanner(this);
+		pathManager = new PathManager();
 
-		((Switch) findViewById(R.id.picture_switch_fix_angle)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				needFixAngle = isChecked;
-			}
-		});
+		upLevelShower = (TextView) findViewById(R.id.textView_up_folder_name);
+		currentLevelShower = (TextView) findViewById(R.id.textView_current_level);
+		findViewById(R.id.button_up_folder).setOnClickListener(this);
+		final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycleView);
+		recyclerView.setLayoutManager(new GridLayoutManager(PicturePickerUnity.this,3,GridLayoutManager.VERTICAL,false));
+		recyclerView.setHasFixedSize(true);
+		recyclerView.setAdapter(adapter);
 
+		//计算裁剪长宽的最大公约数
 		final int maxCommonDivisor = maxCommonDivisor(CROP_WIDTH, CROP_HEIGHT);
 		CROP_WIDTH_RATION = CROP_WIDTH / maxCommonDivisor;
 		CROP_HEIGHT_RATION = CROP_HEIGHT / maxCommonDivisor;
@@ -212,6 +243,7 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 		new File(TEMPSAVE_PATH).delete();
 		new File(TEMPSAVE_PATH2).delete();
 
+		scanner.scanFiles(pathManager.getCurrentPath(),PicturePickerUnity.this);
 	}
 
 	/**
@@ -231,20 +263,6 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 			return height;
 		} else { // 否则,进行递归,把n赋给m,把余数赋给n
 			return maxCommonDivisor(height, width % height);
-		}
-	}
-
-	@Override
-	public void onClick(View clickedView) {
-		switch (clickedView.getId()) {
-			case R.id.picture_selector_fromCamera:
-				if (showCameraTips()) {
-					requestPickFromCamera();
-				}
-				break;
-			case R.id.picture_selector_fromLocal:
-				requestPickFromLocal();
-				break;
 		}
 	}
 
@@ -271,6 +289,108 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 			return false;
 		} else {
 			return true;
+		}
+	}
+
+	/**
+	 * 点击文件夹回调
+	 *
+	 * @param fileObject	文件对象
+	 */
+	@Override
+	public void onFolderClick(Scanner.FileObject fileObject) {
+		scanner.scanFiles(pathManager.addPath(fileObject.getPath()),PicturePickerUnity.this);
+	}
+
+	/**
+	 * 点击图像对象回调
+	 *
+	 * @param fileObject	文件对象
+	 */
+	@Override
+	public void onFileClick(Scanner.FileObject fileObject) {
+		if (NEED_CROP){
+			final Uri uri = FileProvider.getUriForFile(PicturePickerUnity.this, PicturePickerUnity.this.getApplicationContext().getPackageName() + ".provider", new File(fileObject.getPath()));
+			cropImageFromURI(uri);
+		}else {
+			handleCompressAndSave(new File(fileObject.getPath()),null);
+		}
+	}
+
+	/**
+	 * 点击选项按钮
+	 *
+	 * @param optionType	选项功能
+	 */
+	@Override
+	public void onOptionClick(FileObjectAdapter.OptionTypes optionType) {
+		switch (optionType){
+			case 最近图像:
+				scanner.scanFiles(pathManager.addPath("recent"),PicturePickerUnity.this);
+				break;
+			case 使用其他图库:
+				requestPickFromLocal();
+				break;
+			case 使用相机:
+				if (showCameraTips()) {
+					requestPickFromCamera();
+				}
+				break;
+		}
+	}
+
+	/**
+	 * 获取到扫描结果
+	 *
+	 * 显示上一级目录名称
+	 * 显示当前目录名称
+	 * 往文件展示适配器中添加数据对象
+	 *
+	 * @param fileObjects	文件对象列表
+	 * @param currentLevel	当前的目录
+	 */
+	@Override
+	public void onScanCompleted(@NonNull ArrayList<Scanner.FileObject> fileObjects, String currentLevel) {
+		//显示当前目录名称
+		currentLevelShower.setText(String.format("%s%s", getString(R.string.CURRENT), currentLevel));
+
+		//显示上一级目录的名称
+		final String upFolderName = pathManager.getUpPath();
+		if (upFolderName == null){
+			upLevelShower.setText(R.string.NOUP);
+		}else if (upFolderName.equals("main")){
+			upLevelShower.setText(R.string.MAIN);
+		}else if (upFolderName.equals("recent")){
+			upLevelShower.setText(R.string.RECENT);
+		}else {
+			upLevelShower.setText(upFolderName);
+		}
+
+		//往对象列表适配器中添加数据
+		adapter.putSource(fileObjects);
+	}
+
+	/**
+	 * 获取扫描结果失败
+	 */
+	@Override
+	public void onScanFailed() {
+
+	}
+
+	/**
+	 * 控件点击控制
+	 *
+	 * 操作有：
+	 * 返回上一级目录
+	 */
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()){
+			case R.id.button_up_folder:
+				//点击上一级按钮
+				scanner.scanFiles(pathManager.popPath(),PicturePickerUnity.this);
+				break;
 		}
 	}
 
@@ -404,7 +524,6 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 	 */
 	private void requestPickFromCamera() {
 		final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		//final Uri uri = Uri.fromFile(new File(TEMPSAVE_PATH));
 		final Uri uri = FileProvider.getUriForFile(PicturePickerUnity.this, PicturePickerUnity.this.getApplicationContext().getPackageName() + ".provider", new File(TEMPSAVE_PATH));
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 		intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -428,7 +547,6 @@ public class PicturePickerUnity extends AppCompatActivity implements View.OnClic
 
 			if (NEED_CROP) {
 				//如果需要剪裁,则直接调到剪裁部分
-				//final Uri uri = Uri.fromFile(savedFile);
 				final Uri uri = FileProvider.getUriForFile(PicturePickerUnity.this, PicturePickerUnity.this.getApplicationContext().getPackageName() + ".provider", savedFile);
 				cropImageFromURI(uri);
 			} else {

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">PicturePicker</string>
 
+    <!--选取器以及返回错误代码部分文字-->
     <string name="simple_done">我知道了</string>
 
     <string name="selector_from_Local">从本地图库选择</string>
@@ -21,5 +22,21 @@
     <string name="ERROR_TEXT_UNKNOWN">未知的返回数据.</string>
     <string name="ERROR_TEXT_PERMISSION">请先授予应用权限.</string>
     <string name="ERROR_TEXT_MOVEFAILED">移动文件时发生错误.</string>
+
+    <!--内建图像选取器文字部分-->
+    <string name="TEXT_UP_FOLDER">上一级</string>
+    <string name="LOADING_SCANNING_RECENT">正在获取最近图像</string>
+    <string name="LOADING_SCANNING_FILES">正在获取文件列表</string>
+    <string name="FILE_TYPE_FOLDER">文件夹</string>
+    <string name="FILE_TYPE_OPTION_OTHER_GALLERY">使用其他图库</string>
+    <string name="FILE_TYPE_OPTION_CAMERA">通过照相获取</string>
+    <string name="FILE_TYPE_OPTION_RECENT">查看最近图像</string>
+
+    <string name="RECENT">最近图像</string>
+    <string name="MAIN">储存设备</string>
+    <string name="EXStorage">外置储存</string>
+    <string name="INStorage">内置储存</string>
+    <string name="NOUP">无上一级</string>
+    <string name="CURRENT">当前路径：</string>
 
 </resources>

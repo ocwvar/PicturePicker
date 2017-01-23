@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="JPG">#2cc78e</color>
+    <color name="BMP">#3681f2</color>
+    <color name="PNG">#ed772d</color>
+
 </resources>
