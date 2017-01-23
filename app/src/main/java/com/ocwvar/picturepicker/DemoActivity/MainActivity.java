@@ -91,9 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 		///////////////////////////////创建请求构建器///////////////////////////////
 		///////////////////////////////////////////////////////////////////////////
 
-		final PicturePickerUnity.Builder builder = new PicturePickerUnity.Builder();
-
-		builder
+		new PicturePickerUnity.Builder()
 				.needCompress(needCompress)
 				.needCrop(needCrop)
 				.returnBitmap(bitmapOnly)
@@ -104,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				.setCropWidth(cropWidth)
 				.setFileSavePathAndName(Environment.getExternalStorageDirectory() + "/PickerTest", "Test" + String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
 				.startPickerNow_ACTIVITY(MainActivity.this, 8, 1);
+
 
 	}
 
