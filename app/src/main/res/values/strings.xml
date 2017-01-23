@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">PicturePicker</string>
 
+    <string name="simple_done">我知道了</string>
+
     <string name="selector_from_Local">从本地图库选择</string>
     <string name="selector_from_Camera">从照相机获取</string>
+    <string name="switcher_fix_angle">图像旋转修正，在某些型号三星手机拍摄出的图像会被系统进行旋转，选取此选项进行修正。</string>
+
+    <string name="cameraTips">考虑到系统兼容性，请您使用系统自带的相机，而非第三方相机APP，以保证数据的兼容性。</string>
 
     <string name="ERROR_TEXT_COMPRESS_FILED">压缩储存失败,无法返回带压缩请求的位图和文件.</string>
     <string name="ERROR_TEXT_FILE_FILED">文件操作失败,请检查储存容量和应用权限.</string>
@@ -14,5 +19,7 @@
     <string name="ERROR_TEXT_LOCAL_NO_DATA">图库无数据返回.</string>
     <string name="ERROR_TEXT_ARG">请求参数异常.</string>
     <string name="ERROR_TEXT_UNKNOWN">未知的返回数据.</string>
+    <string name="ERROR_TEXT_PERMISSION">请先授予应用权限.</string>
+    <string name="ERROR_TEXT_MOVEFAILED">移动文件时发生错误.</string>
 
 </resources>
