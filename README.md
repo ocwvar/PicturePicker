@@ -26,15 +26,8 @@ Use to pick a picture from local or camera with crop or compress
 
 ##
 
-#**局限性 limitation (16/11/11 11:11)**
-
-1.在 targetSdkVersion / compileSdkVersion = 24 的环境下不能正常使用 Uri ,导致不能正常工作. 最高的环境版本为 
-
-targetSdkVersion / compileSdkVersion = 23 , buildToolsVersion = 23.0.3
-
-1.Picker will not work under targetSdkVersion / compileSdkVersion = 24 , 
-
-please use targetSdkVersion / compileSdkVersion = 23 , buildToolsVersion = 23.0.3
+#**注意**
+**目前已解决 BuildTools 25+ 以上版本拍照、拍照后编辑异常的问题。**但经测试发现，不是所有第三方拍照APP均兼容 BuildTools25+ 的URI权限新特性，所以需要使用自带相机来解决此问题。
 
 ##
 
