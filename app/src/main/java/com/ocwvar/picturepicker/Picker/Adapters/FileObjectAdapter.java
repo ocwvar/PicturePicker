@@ -1,4 +1,4 @@
-package com.ocwvar.picturepicker.Picker;
+package com.ocwvar.picturepicker.Picker.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ocwvar.picturepicker.Picker.Scanner;
 import com.ocwvar.picturepicker.R;
 import com.squareup.picasso.Picasso;
 
@@ -25,28 +26,16 @@ import java.util.ArrayList;
 
 public class FileObjectAdapter extends RecyclerView.Adapter {
 
-	private ArrayList<Scanner.FileObject> fileObjects;
-	private OnFileItemClickCallback callback;
-
-	private boolean otherGalleryAvailable = true;
-	private boolean cameraAvailable = true;
-
 	private final int COLOR_PNG;
 	private final int COLOR_JPG;
 	private final int COLOR_BMP;
-
-	public interface OnFileItemClickCallback{
-
-		void onFolderClick(Scanner.FileObject fileObject);
-
-		void onFileClick(Scanner.FileObject fileObject);
-
-		void onOptionClick(OptionTypes optionType);
-
-	}
+	private ArrayList<Scanner.FileObject> fileObjects;
+	private OnFileItemClickCallback callback;
+	private boolean otherGalleryAvailable = true;
+	private boolean cameraAvailable = true;
 
 	@SuppressWarnings("deprecation")
-	FileObjectAdapter(OnFileItemClickCallback callback, Context context) {
+	public FileObjectAdapter(OnFileItemClickCallback callback, Context context) {
 		this.callback = callback;
 		this.fileObjects = new ArrayList<>();
 		this.COLOR_JPG = context.getResources().getColor(R.color.JPG);
@@ -55,21 +44,13 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 	}
 
 	/**
-	 * 选项操作类型
-	 */
-	public enum OptionTypes{
-		使用其他图库,
-		使用相机,
-		最近图像
-	}
-
-	/**
 	 * 添加数据
-	 * @param source	数据源
+	 *
+	 * @param source 数据源
 	 */
-	public void putSource(ArrayList<Scanner.FileObject> source){
+	public void putSource(ArrayList<Scanner.FileObject> source) {
 		fileObjects.clear();
-		if (source != null && source.size() > 0){
+		if (source != null && source.size() > 0) {
 			fileObjects.addAll(source);
 		}
 
@@ -78,16 +59,18 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 
 	/**
 	 * 设置是否可以使用其他图库选项
-	 * @param available	是否允许使用其他图库
+	 *
+	 * @param available 是否允许使用其他图库
 	 */
 	public void setOptionOfOtherGallery(boolean available) {
-		this.otherGalleryAvailable= available;
+		this.otherGalleryAvailable = available;
 		notifyDataSetChanged();
 	}
 
 	/**
 	 * 设置是否可以使用相机选项
-	 * @param available	是否允许使用相机拍照
+	 *
+	 * @param available 是否允许使用相机拍照
 	 */
 	public void setOptionOfCamera(boolean available) {
 		this.cameraAvailable = available;
@@ -101,34 +84,34 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		if (viewType == 0){
-			return new OtherGalleryViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_option_other_gallery,parent,false));
-		}else if (viewType == 1){
-			return new CameraViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_option_camera,parent,false));
-		}else if (viewType == 2){
-			return new RecentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_option_recent,parent,false));
-		}else{
-			return new FileObjectViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_file_object,parent,false));
+		if (viewType == 0) {
+			return new OtherGalleryViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_option_other_gallery, parent, false));
+		} else if (viewType == 1) {
+			return new CameraViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_option_camera, parent, false));
+		} else if (viewType == 2) {
+			return new RecentViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_option_recent, parent, false));
+		} else {
+			return new FileObjectViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_file_object, parent, false));
 		}
 	}
 
 	@Override
 	public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-		if (holder instanceof FileObjectViewHolder){
+		if (holder instanceof FileObjectViewHolder) {
 			final FileObjectViewHolder viewHolder = (FileObjectViewHolder) holder;
-			final Scanner.FileObject fileObject = fileObjects.get(position-3);
+			final Scanner.FileObject fileObject = fileObjects.get(position - 3);
 
-			if (fileObject.isFolder()){
+			if (fileObject.isFolder()) {
 				viewHolder.type.setText(R.string.FILE_TYPE_FOLDER);
-			}else {
+			} else {
 				viewHolder.type.setText(fileObject.getType());
 			}
 
 			viewHolder.name.setText(fileObject.getName());
 
-			if (!fileObject.isFolder()){
+			if (!fileObject.isFolder()) {
 				//显示的是图像
-				switch (fileObject.getType()){
+				switch (fileObject.getType()) {
 					case "JPG":
 					case "JPEG":
 						viewHolder.typeBG.setBackgroundColor(COLOR_JPG);
@@ -142,32 +125,32 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 				}
 
 				Picasso.with(viewHolder.itemView.getContext())
-						.load("file://"+fileObject.getPath())
+						.load("file://" + fileObject.getPath())
 						.config(Bitmap.Config.RGB_565)
-						.resize(200,200)
+						.resize(200, 200)
 						.centerCrop()
 						.placeholder(R.drawable.ic_action_image_loading)
 						.error(R.drawable.ic_action_image_failed)
 						.into(viewHolder.cover);
-			}else {
+			} else {
 				//显示的目录
 				viewHolder.cover.setImageResource(R.drawable.ic_folder);
 				viewHolder.typeBG.setBackgroundColor(Color.LTGRAY);
 			}
 
 
-		}else if (holder instanceof OtherGalleryViewHolder){
+		} else if (holder instanceof OtherGalleryViewHolder) {
 			final OtherGalleryViewHolder viewHolder = (OtherGalleryViewHolder) holder;
-			if (!otherGalleryAvailable){
+			if (!otherGalleryAvailable) {
 				viewHolder.itemView.setAlpha(0.5f);
-			}else {
+			} else {
 				viewHolder.itemView.setAlpha(1f);
 			}
-		}else if (holder instanceof  CameraViewHolder){
+		} else if (holder instanceof CameraViewHolder) {
 			final CameraViewHolder viewHolder = (CameraViewHolder) holder;
-			if (!cameraAvailable){
+			if (!cameraAvailable) {
 				viewHolder.itemView.setAlpha(0.5f);
-			}else {
+			} else {
 				viewHolder.itemView.setAlpha(1f);
 			}
 		}
@@ -178,7 +161,26 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 		return fileObjects.size() + 3;
 	}
 
-	private class FileObjectViewHolder extends  RecyclerView.ViewHolder implements View.OnClickListener {
+	/**
+	 * 选项操作类型
+	 */
+	public enum OptionTypes {
+		使用其他图库,
+		使用相机,
+		最近图像
+	}
+
+	public interface OnFileItemClickCallback {
+
+		void onFolderClick(Scanner.FileObject fileObject);
+
+		void onFileClick(Scanner.FileObject fileObject);
+
+		void onOptionClick(OptionTypes optionType);
+
+	}
+
+	private class FileObjectViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 		final TextView name;
 		final TextView type;
@@ -198,21 +200,21 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 
 		@Override
 		public void onClick(View v) {
-			if (callback == null){
+			if (callback == null) {
 				return;
 			}
 
-			final Scanner.FileObject fileObject = fileObjects.get(getAdapterPosition()-3);
-			if (fileObject.isFolder()){
+			final Scanner.FileObject fileObject = fileObjects.get(getAdapterPosition() - 3);
+			if (fileObject.isFolder()) {
 				callback.onFolderClick(fileObject);
-			}else {
+			} else {
 				callback.onFileClick(fileObject);
 			}
 
 		}
 	}
 
-	private class OtherGalleryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+	private class OtherGalleryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 		OtherGalleryViewHolder(View itemView) {
 			super(itemView);
@@ -221,7 +223,7 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 
 		@Override
 		public void onClick(View v) {
-			if (callback == null || !otherGalleryAvailable){
+			if (callback == null || !otherGalleryAvailable) {
 				return;
 			}
 
@@ -229,7 +231,7 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 		}
 	}
 
-	private class CameraViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+	private class CameraViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 		CameraViewHolder(View itemView) {
 			super(itemView);
@@ -238,7 +240,7 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 
 		@Override
 		public void onClick(View v) {
-			if (callback == null || !cameraAvailable){
+			if (callback == null || !cameraAvailable) {
 				return;
 			}
 
@@ -246,7 +248,7 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 		}
 	}
 
-	private class RecentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+	private class RecentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 		RecentViewHolder(View itemView) {
 			super(itemView);
@@ -255,7 +257,7 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 
 		@Override
 		public void onClick(View v) {
-			if (callback == null || !cameraAvailable){
+			if (callback == null || !cameraAvailable) {
 				return;
 			}
 

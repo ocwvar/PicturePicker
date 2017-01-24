@@ -35,6 +35,8 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ocwvar.picturepicker.Picker.Adapters.FileObjectAdapter;
+import com.ocwvar.picturepicker.Picker.Units.PathManager;
 import com.ocwvar.picturepicker.R;
 
 import java.io.File;
@@ -208,15 +210,15 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 		ERROR_TEXT_MOVEFAILED = getString(R.string.ERROR_TEXT_MOVEFAILED);
 		ERROR_TEXT_OOM = getString(R.string.ERROR_TEXT_OOM);
 
-		if (Build.VERSION.SDK_INT >= 21){
+		if (Build.VERSION.SDK_INT >= 21) {
 			//设置状态栏和导航栏颜色
 			final Window window = getWindow();
 			window.setNavigationBarColor(Color.LTGRAY);
-			window.setStatusBarColor(Color.argb(100,255,9,50));
+			window.setStatusBarColor(Color.argb(100, 255, 9, 50));
 		}
 
 		setContentView(R.layout.picture_select_buildint_gallery);
-		adapter = new FileObjectAdapter(this,getApplicationContext());
+		adapter = new FileObjectAdapter(this, getApplicationContext());
 		scanner = new Scanner(this);
 		pathManager = new PathManager();
 
@@ -224,7 +226,7 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 		currentLevelShower = (TextView) findViewById(R.id.textView_current_level);
 		findViewById(R.id.button_up_folder).setOnClickListener(this);
 		final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycleView);
-		recyclerView.setLayoutManager(new GridLayoutManager(PicturePickerUnity.this,3,GridLayoutManager.VERTICAL,false));
+		recyclerView.setLayoutManager(new GridLayoutManager(PicturePickerUnity.this, 3, GridLayoutManager.VERTICAL, false));
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setAdapter(adapter);
 
@@ -237,44 +239,44 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 		new File(TEMPSAVE_PATH).delete();
 		new File(TEMPSAVE_PATH2).delete();
 
-		scanner.scanFiles(pathManager.getCurrentPath(),PicturePickerUnity.this);
+		scanner.scanFiles(pathManager.getCurrentPath(), PicturePickerUnity.this);
 	}
 
 	/**
 	 * 点击文件夹回调
 	 *
-	 * @param fileObject	文件对象
+	 * @param fileObject 文件对象
 	 */
 	@Override
 	public void onFolderClick(Scanner.FileObject fileObject) {
-		scanner.scanFiles(pathManager.addPath(fileObject.getPath()),PicturePickerUnity.this);
+		scanner.scanFiles(pathManager.addPath(fileObject.getPath()), PicturePickerUnity.this);
 	}
 
 	/**
 	 * 点击图像对象回调
 	 *
-	 * @param fileObject	文件对象
+	 * @param fileObject 文件对象
 	 */
 	@Override
 	public void onFileClick(Scanner.FileObject fileObject) {
-		if (NEED_CROP){
+		if (NEED_CROP) {
 			final Uri uri = FileProvider.getUriForFile(PicturePickerUnity.this, PicturePickerUnity.this.getApplicationContext().getPackageName() + ".provider", new File(fileObject.getPath()));
 			cropImageFromURI(uri);
-		}else {
-			handleCompressAndSave(new File(fileObject.getPath()),null);
+		} else {
+			handleCompressAndSave(new File(fileObject.getPath()), null);
 		}
 	}
 
 	/**
 	 * 点击选项按钮
 	 *
-	 * @param optionType	选项功能
+	 * @param optionType 选项功能
 	 */
 	@Override
 	public void onOptionClick(FileObjectAdapter.OptionTypes optionType) {
-		switch (optionType){
+		switch (optionType) {
 			case 最近图像:
-				scanner.scanFiles(pathManager.addPath("recent"),PicturePickerUnity.this);
+				scanner.scanFiles(pathManager.addPath("recent"), PicturePickerUnity.this);
 				break;
 			case 使用其他图库:
 				requestPickFromLocal();
@@ -289,13 +291,13 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 
 	/**
 	 * 获取到扫描结果
-	 *
+	 * <p>
 	 * 显示上一级目录名称
 	 * 显示当前目录名称
 	 * 往文件展示适配器中添加数据对象
 	 *
-	 * @param fileObjects	文件对象列表
-	 * @param currentLevel	当前的目录
+	 * @param fileObjects  文件对象列表
+	 * @param currentLevel 当前的目录
 	 */
 	@Override
 	public void onScanCompleted(@NonNull ArrayList<Scanner.FileObject> fileObjects, String currentLevel) {
@@ -304,11 +306,11 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 
 		//显示上一级目录的名称
 		final String upFolderName = pathManager.getUpPath();
-		if (upFolderName == null){
+		if (upFolderName == null) {
 			upLevelShower.setText(R.string.NOUP);
-		}else if (upFolderName.equals("main")){
+		} else if (upFolderName.equals("main")) {
 			upLevelShower.setText(R.string.MAIN);
-		}else if (upFolderName.equals("recent")){
+		} else if (upFolderName.equals("recent")) {
 			upLevelShower.setText(R.string.RECENT);
 		} else {
 			upLevelShower.setText(reduceLongString(upFolderName));
@@ -328,16 +330,16 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 
 	/**
 	 * 控件点击控制
-	 *
+	 * <p>
 	 * 操作有：
 	 * 返回上一级目录
 	 */
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()){
+		switch (v.getId()) {
 			case R.id.button_up_folder:
 				//点击上一级按钮
-				scanner.scanFiles(pathManager.popPath(),PicturePickerUnity.this);
+				scanner.scanFiles(pathManager.popPath(), PicturePickerUnity.this);
 				break;
 		}
 	}

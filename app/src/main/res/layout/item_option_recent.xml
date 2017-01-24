@@ -4,12 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardMaxElevation="4dp"
-    app:cardElevation="2dp"
+    app:cardBackgroundColor="#bfff0932"
     app:cardCornerRadius="3dp"
-    app:cardUseCompatPadding="true"
+    app:cardElevation="2dp"
+    app:cardMaxElevation="4dp"
     app:cardPreventCornerOverlap="false"
-    app:cardBackgroundColor="#bfff0932">
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:id="@+id/item_file_type_color"
@@ -18,30 +18,30 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:padding="3dp"
+            android:singleLine="true"
             android:text=""
             android:textColor="#fff"
-            android:textStyle="bold"
-            android:gravity="start"
             android:textSize="17sp"
-            android:padding="3dp"
-            android:singleLine="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:textStyle="bold"/>
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/FILE_TYPE_OPTION_RECENT"
-            android:textSize="13sp"
             android:padding="3dp"
-            android:textColor="#fff"
             android:singleLine="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:text="@string/FILE_TYPE_OPTION_RECENT"
+            android:textColor="#fff"
+            android:textSize="13sp"/>
 
-        <com.ocwvar.picturepicker.Picker.SameWidthImageView
-            android:src="@drawable/ic_recent"
+        <com.ocwvar.picturepicker.Picker.Units.SameWidthImageView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_recent"/>
 
     </LinearLayout>
 

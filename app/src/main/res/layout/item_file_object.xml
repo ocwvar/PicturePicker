@@ -4,11 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardMaxElevation="4dp"
-    app:cardElevation="2dp"
     app:cardCornerRadius="3dp"
-    app:cardUseCompatPadding="true"
-    app:cardPreventCornerOverlap="false">
+    app:cardElevation="2dp"
+    app:cardMaxElevation="4dp"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:id="@+id/item_file_type_color"
@@ -18,25 +18,25 @@
 
         <TextView
             android:id="@+id/item_file_type"
-            android:textColor="#fff"
-            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="start"
-            android:textSize="17sp"
             android:padding="3dp"
             android:singleLine="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:textColor="#fff"
+            android:textSize="17sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/item_file_name"
-            android:textSize="13sp"
-            android:padding="3dp"
-            android:textColor="#fff"
-            android:singleLine="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:singleLine="true"
+            android:textColor="#fff"
+            android:textSize="13sp"/>
 
-        <com.ocwvar.picturepicker.Picker.SameWidthImageView
+        <com.ocwvar.picturepicker.Picker.Units.SameWidthImageView
             android:id="@+id/item_file_cover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

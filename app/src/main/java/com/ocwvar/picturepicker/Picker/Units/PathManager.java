@@ -1,4 +1,4 @@
-package com.ocwvar.picturepicker.Picker;
+package com.ocwvar.picturepicker.Picker.Units;
 
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -19,28 +19,28 @@ public class PathManager {
 
 	public PathManager() {
 		this.pathSet = new ArrayList<>();
-		this.pathSet.add(0,"recent");
-		this.pathSet.add(1,"main");
+		this.pathSet.add(0, "recent");
+		this.pathSet.add(1, "main");
 	}
 
 	/**
-	 * @return	栈顶路径
+	 * @return 栈顶路径
 	 */
-	public String getCurrentPath(){
+	public String getCurrentPath() {
 		return this.pathSet.get(0);
 	}
 
 	/**
 	 * 添加路径，进入下一个路径时调用
 	 *
-	 * @param path	路径
-	 * @return	栈顶路径
+	 * @param path 路径
+	 * @return 栈顶路径
 	 */
-	public String addPath(String path){
-		if (!TextUtils.isEmpty(path)){
-			if (!pathSet.contains(path)){
-				pathSet.add(0,path);
-			}else {
+	public String addPath(String path) {
+		if (!TextUtils.isEmpty(path)) {
+			if (!pathSet.contains(path)) {
+				pathSet.add(0, path);
+			} else {
 				return null;
 			}
 		}
@@ -50,13 +50,13 @@ public class PathManager {
 	/**
 	 * 移除栈顶路径，返回上一级路径时调用
 	 *
-	 * @return	栈顶路径
+	 * @return 栈顶路径
 	 */
-	public String popPath(){
-		if (pathSet.size() == 1){
+	public String popPath() {
+		if (pathSet.size() == 1) {
 			//必须保证栈底部是 "main"
 			return getCurrentPath();
-		}else {
+		} else {
 			//否则移除栈顶路径后，返回栈顶路径
 			pathSet.remove(0);
 			return getCurrentPath();
@@ -64,9 +64,11 @@ public class PathManager {
 	}
 
 	/**
-	 * @return	上一级目录，无上一级目录时返回NULL
+	 * @return 上一级目录，无上一级目录时返回NULL
 	 */
-	public @Nullable String getUpPath(){
+	public
+	@Nullable
+	String getUpPath() {
 		try {
 			return pathSet.get(1);
 		} catch (Exception e) {
