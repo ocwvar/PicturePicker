@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ocwvar.picturepicker.Picker.PicturePickerUnity;
 import com.ocwvar.picturepicker.R;
@@ -127,24 +126,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 				if (bitmap != null) {
 					imageView.setImageBitmap(bitmap);
-				} else {
-					final String error = data.getStringExtra(PicturePickerUnity.EXTRAS_EXCEPTION);
-					if (!TextUtils.isEmpty(error)) {
-						Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
-					}
 				}
-			} else if (data.getAction().equals(PicturePickerUnity.ACTION_FAILED)) {
-
-				//获取错误信息
-				final String error = data.getStringExtra(PicturePickerUnity.EXTRAS_EXCEPTION);
-
-				if (!TextUtils.isEmpty(error)) {
-					Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
-				}
-
 			}
-
-
 		}
 	}
 

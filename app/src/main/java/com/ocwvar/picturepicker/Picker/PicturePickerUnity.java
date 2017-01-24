@@ -41,6 +41,7 @@ import com.ocwvar.picturepicker.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -63,8 +64,6 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 	public static final String EXTRAS_BITMAP = "rs1";
 	//获取图像文件对象
 	public static final String EXTRAS_FILE = "rs2";
-	//获取异常消息结果
-	public static final String EXTRAS_EXCEPTION = "rs3";
 	/**
 	 * 结果Action
 	 * <p>
@@ -175,6 +174,11 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 	 * 是否需要修正三星手机导致的图像旋转问题
 	 */
 	private boolean needFixAngle = false;
+
+	/**
+	 * 对话框储存容器
+	 */
+	private WeakReference<AlertDialog> dialogContainer = new WeakReference<>(null);
 
 	@Override
 	@SuppressWarnings("ResultOfMethodCallIgnored")
@@ -400,10 +404,19 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 			}
 		}
 
+		//将错误信息显示在界面内的对话框
+		if (!TextUtils.isEmpty(exceptionMessage)) {
+			showMessageDialog(true, exceptionMessage, getString(R.string.simple_done), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			return;
+		}
+
 		//传递文件对象
 		result.putExtra(EXTRAS_FILE, file);
-		//传递错误信息
-		result.putExtra(EXTRAS_EXCEPTION, exceptionMessage);
 		//设置返回Intent
 		setResult(100, result);
 
@@ -819,6 +832,41 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 			}
 		} else {
 			onFinalStep(null, null, ERROR_TEXT_PIC_INCURRECT);
+		}
+	}
+
+	/**
+	 * 显示信息对话框
+	 *
+	 * @param canBeCancel    是否允许取消
+	 * @param message        显示的信息
+	 * @param doneButtonText 按钮文字，传入空则不显示按钮
+	 * @param listener       按钮回调，传入空则不显示按钮
+	 */
+	private void showMessageDialog(boolean canBeCancel, String message, String doneButtonText, DialogInterface.OnClickListener listener) {
+		AlertDialog dialog = dialogContainer.get();
+		if (dialog == null) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(PicturePickerUnity.this);
+			dialog = builder.create();
+		}
+
+		dialog.setMessage(message);
+		dialog.setCancelable(canBeCancel);
+		dialog.setCanceledOnTouchOutside(canBeCancel);
+		if (!TextUtils.isEmpty(doneButtonText) && listener != null) {
+			dialog.setButton(DialogInterface.BUTTON_POSITIVE, doneButtonText, listener);
+		}
+
+		dialog.show();
+	}
+
+	/**
+	 * 使信息对话框消失
+	 */
+	private void dismissDialog() {
+		final AlertDialog alertDialog = dialogContainer.get();
+		if (alertDialog != null && alertDialog.isShowing()) {
+			alertDialog.show();
 		}
 	}
 
