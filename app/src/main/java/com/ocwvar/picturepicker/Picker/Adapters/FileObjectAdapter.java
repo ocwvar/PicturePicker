@@ -2,7 +2,6 @@ package com.ocwvar.picturepicker.Picker.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +28,7 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 	private final int COLOR_PNG;
 	private final int COLOR_JPG;
 	private final int COLOR_BMP;
+	private final int COLOR_FOLDER;
 	private ArrayList<Scanner.FileObject> fileObjects;
 	private OnFileItemClickCallback callback;
 	private boolean otherGalleryAvailable = true;
@@ -41,6 +41,7 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 		this.COLOR_JPG = context.getResources().getColor(R.color.JPG);
 		this.COLOR_PNG = context.getResources().getColor(R.color.PNG);
 		this.COLOR_BMP = context.getResources().getColor(R.color.BMP);
+		this.COLOR_FOLDER = context.getResources().getColor(R.color.FOLDER);
 	}
 
 	/**
@@ -135,9 +136,8 @@ public class FileObjectAdapter extends RecyclerView.Adapter {
 			} else {
 				//显示的目录
 				viewHolder.cover.setImageResource(R.drawable.ic_folder);
-				viewHolder.typeBG.setBackgroundColor(Color.LTGRAY);
+				viewHolder.typeBG.setBackgroundColor(COLOR_FOLDER);
 			}
-
 
 		} else if (holder instanceof OtherGalleryViewHolder) {
 			final OtherGalleryViewHolder viewHolder = (OtherGalleryViewHolder) holder;

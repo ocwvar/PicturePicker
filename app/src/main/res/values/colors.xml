@@ -7,5 +7,6 @@
     <color name="JPG">#2cc78e</color>
     <color name="BMP">#3681f2</color>
     <color name="PNG">#ed772d</color>
+    <color name="FOLDER">#535353</color>
 
 </resources>
