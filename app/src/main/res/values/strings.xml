@@ -3,6 +3,7 @@
 
     <!--选取器以及返回错误代码部分文字-->
     <string name="simple_done">我知道了</string>
+    <string name="simple_loading">正在处理中…</string>
 
     <string name="selector_from_Local">从本地图库选择</string>
     <string name="selector_from_Camera">从照相机获取</string>

@@ -266,6 +266,8 @@ public class PicturePickerUnity extends AppCompatActivity
 	 */
 	@Override
 	public void onFileClick(Scanner.FileObject fileObject) {
+		showMessageDialog(false, getString(R.string.simple_loading), null, null);
+
 		if (NEED_CROP) {
 			final Uri uri = FileProvider.getUriForFile(PicturePickerUnity.this, PicturePickerUnity.this.getApplicationContext().getPackageName() + ".provider", new File(fileObject.getPath()));
 			cropImageFromURI(uri);
@@ -286,10 +288,12 @@ public class PicturePickerUnity extends AppCompatActivity
 				scanner.scanFiles(pathManager.addPath("recent"), PicturePickerUnity.this);
 				break;
 			case 使用其他图库:
+				showMessageDialog(false, getString(R.string.simple_loading), null, null);
 				requestPickFromLocal();
 				break;
 			case 使用相机:
 				if (showCameraTips()) {
+					showMessageDialog(false, getString(R.string.simple_loading), null, null);
 					requestPickFromCamera();
 				}
 				break;
@@ -378,6 +382,8 @@ public class PicturePickerUnity extends AppCompatActivity
 	 */
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	private void onFinalStep(Bitmap bitmap, File file, String exceptionMessage) {
+
+		dismissDialog();
 
 		final Intent result = new Intent();
 
@@ -851,6 +857,7 @@ public class PicturePickerUnity extends AppCompatActivity
 		if (dialog == null) {
 			final AlertDialog.Builder builder = new AlertDialog.Builder(PicturePickerUnity.this);
 			dialog = builder.create();
+			dialogContainer = new WeakReference<>(dialog);
 		}
 
 		dialog.setMessage(message);
@@ -869,7 +876,7 @@ public class PicturePickerUnity extends AppCompatActivity
 	private void dismissDialog() {
 		final AlertDialog alertDialog = dialogContainer.get();
 		if (alertDialog != null && alertDialog.isShowing()) {
-			alertDialog.show();
+			alertDialog.dismiss();
 		}
 	}
 
