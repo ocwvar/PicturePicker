@@ -145,6 +145,7 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 	private String ERROR_TEXT_ARG;
 	private String ERROR_TEXT_UNKNOWN;
 	private String ERROR_TEXT_MOVEFAILED;
+	private String ERROR_TEXT_OOM;
 	/**
 	 * 操作参数
 	 * <p>
@@ -205,6 +206,7 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 		ERROR_TEXT_ARG = getString(R.string.ERROR_TEXT_ARG);
 		ERROR_TEXT_UNKNOWN = getString(R.string.ERROR_TEXT_UNKNOWN);
 		ERROR_TEXT_MOVEFAILED = getString(R.string.ERROR_TEXT_MOVEFAILED);
+		ERROR_TEXT_OOM = getString(R.string.ERROR_TEXT_OOM);
 
 		if (Build.VERSION.SDK_INT >= 21){
 			//设置状态栏和导航栏颜色
@@ -710,7 +712,13 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 		Bitmap bitmap = null;
 
 		if (handleFile != null) {
-			bitmap = BitmapFactory.decodeFile(handleFile.getPath());
+			try {
+				bitmap = BitmapFactory.decodeFile(handleFile.getPath());
+			} catch (OutOfMemoryError e) {
+				bitmap = null;
+				onFinalStep(null, null, ERROR_TEXT_OOM);
+				return;
+			}
 		} else if (handleBitmap != null) {
 			bitmap = handleBitmap;
 		}
@@ -786,7 +794,7 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 						//创建输出流
 						final FileOutputStream fileOutputStream = new FileOutputStream(saveFile, false);
 
-						if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)) {
+						if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)) {
 							//保存成功
 							if (RETURN_FILE_ONLY) {
 								bitmap.recycle();

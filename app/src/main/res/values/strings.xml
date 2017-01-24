@@ -22,6 +22,7 @@
     <string name="ERROR_TEXT_UNKNOWN">未知的返回数据.</string>
     <string name="ERROR_TEXT_PERMISSION">请先授予应用权限.</string>
     <string name="ERROR_TEXT_MOVEFAILED">移动文件时发生错误.</string>
+    <string name="ERROR_TEXT_OOM">操作的图像数据过大，内存不足无法进行使用</string>
 
     <!--内建图像选取器文字部分-->
     <string name="TEXT_UP_FOLDER">上一级</string>
