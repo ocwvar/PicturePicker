@@ -53,6 +53,24 @@ import java.util.Random;
 public class PicturePickerUnity extends AppCompatActivity implements FileObjectAdapter.OnFileItemClickCallback, Scanner.ScannerResultCallback, View.OnClickListener {
 
 	/**
+	 * 结果参数字段
+	 * <p>
+	 * keys of result parameter
+	 */
+	//获取位图对象
+	public static final String EXTRAS_BITMAP = "rs1";
+	//获取图像文件对象
+	public static final String EXTRAS_FILE = "rs2";
+	//获取异常消息结果
+	public static final String EXTRAS_EXCEPTION = "rs3";
+	/**
+	 * 结果Action
+	 * <p>
+	 * Action in the result intent
+	 */
+	public static final String ACTION_SUCCESS = "a1";
+	public static final String ACTION_FAILED = "a2";
+	/**
 	 * 请求参数字段
 	 * <p>
 	 * Keys of request parameter
@@ -78,24 +96,6 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 	//保存文件名称
 	private static final String ARG_SAVE_NAME = "ac10";
 	/**
-	 * 结果参数字段
-	 * <p>
-	 * keys of result parameter
-	 */
-	//获取位图对象
-	public static final String EXTRAS_BITMAP = "rs1";
-	//获取图像文件对象
-	public static final String EXTRAS_FILE = "rs2";
-	//获取异常消息结果
-	public static final String EXTRAS_EXCEPTION = "rs3";
-	/**
-	 * 结果Action
-	 * <p>
-	 * Action in the result intent
-	 */
-	public static final String ACTION_SUCCESS = "a1";
-	public static final String ACTION_FAILED = "a2";
-	/**
 	 * 内部请求码
 	 * <p>
 	 * Inner request code
@@ -111,6 +111,26 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 	private final String TEMPSAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/temp.jpg";
 	private final String TEMPSAVE_PATH2 = Environment.getExternalStorageDirectory().getPath() + "/temp2.jpg";
 	/**
+	 * 显示当前界面的显示文字
+	 */
+	TextView currentLevelShower;
+	/**
+	 * 显示上一级文件夹名字
+	 */
+	TextView upLevelShower;
+	/**
+	 * 列表显示的适配器
+	 */
+	FileObjectAdapter adapter;
+	/**
+	 * 搜索器
+	 */
+	Scanner scanner;
+	/**
+	 * 路径管理器
+	 */
+	PathManager pathManager;
+	/**
 	 * 异常消息文字
 	 * <p>
 	 * Text of exception
@@ -125,7 +145,6 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 	private String ERROR_TEXT_ARG;
 	private String ERROR_TEXT_UNKNOWN;
 	private String ERROR_TEXT_MOVEFAILED;
-
 	/**
 	 * 操作参数
 	 * <p>
@@ -143,43 +162,16 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 	private boolean RETURN_BOTH = false;
 	private String CUSTOM_SAVE_PATH = null;
 	private String CUSTOM_SAVE_NAME = null;
-
 	/**
 	 * 图像文件保存路径
 	 * <p>
 	 * The folder of file objects
 	 */
 	private String SAVE_PATH = Environment.getExternalStorageDirectory().getPath() + "/Picker/";
-
 	/**
 	 * 是否需要修正三星手机导致的图像旋转问题
 	 */
 	private boolean needFixAngle = false;
-
-	/**
-	 * 显示当前界面的显示文字
-	 */
-	TextView currentLevelShower;
-
-	/**
-	 * 显示上一级文件夹名字
-	 */
-	TextView upLevelShower;
-
-	/**
-	 * 列表显示的适配器
-	 */
-	FileObjectAdapter adapter;
-
-	/**
-	 * 搜索器
-	 */
-	Scanner scanner;
-
-	/**
-	 * 路径管理器
-	 */
-	PathManager pathManager;
 
 	@Override
 	@SuppressWarnings("ResultOfMethodCallIgnored")
@@ -247,52 +239,6 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 	}
 
 	/**
-	 * 计算最大公约数
-	 *
-	 * @param width  要裁剪的宽度
-	 * @param height 要裁剪的高度
-	 * @return 宽高之比
-	 */
-	private int maxCommonDivisor(int width, int height) {
-		if (width < height) {// 保证m>n,若m<n,则进行数据交换
-			int temp = width;
-			width = height;
-			height = temp;
-		}
-		if (width % height == 0) {// 若余数为0,返回最大公约数
-			return height;
-		} else { // 否则,进行递归,把n赋给m,把余数赋给n
-			return maxCommonDivisor(height, width % height);
-		}
-	}
-
-	/**
-	 * 显示相机使用提示，如果不是第一次使用，则不显示
-	 */
-	private boolean showCameraTips() {
-		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(PicturePickerUnity.this);
-		if (sp.getBoolean("isFirstUseCamera", true)) {
-			final AlertDialog.Builder builder = new AlertDialog.Builder(PicturePickerUnity.this);
-			builder.setMessage(getString(R.string.cameraTips));
-			builder.setCancelable(false);
-			builder.setPositiveButton(R.string.simple_done, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(PicturePickerUnity.this).edit();
-					editor.putBoolean("isFirstUseCamera", false);
-					editor.apply();
-
-					dialog.dismiss();
-				}
-			});
-			builder.show();
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	/**
 	 * 点击文件夹回调
 	 *
 	 * @param fileObject	文件对象
@@ -352,7 +298,7 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 	@Override
 	public void onScanCompleted(@NonNull ArrayList<Scanner.FileObject> fileObjects, String currentLevel) {
 		//显示当前目录名称
-		currentLevelShower.setText(String.format("%s%s", getString(R.string.CURRENT), currentLevel));
+		currentLevelShower.setText(String.format("%s%s", getString(R.string.CURRENT), reduceLongString(currentLevel)));
 
 		//显示上一级目录的名称
 		final String upFolderName = pathManager.getUpPath();
@@ -362,8 +308,8 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 			upLevelShower.setText(R.string.MAIN);
 		}else if (upFolderName.equals("recent")){
 			upLevelShower.setText(R.string.RECENT);
-		}else {
-			upLevelShower.setText(upFolderName);
+		} else {
+			upLevelShower.setText(reduceLongString(upFolderName));
 		}
 
 		//往对象列表适配器中添加数据
@@ -463,6 +409,69 @@ public class PicturePickerUnity extends AppCompatActivity implements FileObjectA
 
 		//结束页面,完成操作
 		finish();
+	}
+
+	/**
+	 * 处理较长的String为短String
+	 *
+	 * @param string 长String
+	 * @return 短String，不足长度的，直接返回原有数据
+	 */
+	private
+	@Nullable
+	String reduceLongString(@NonNull String string) {
+		if (TextUtils.isEmpty(string) || string.length() <= 20) {
+			return string;
+		}
+
+		final int reduceLength = string.length() - 20;
+		return "…" + string.substring(reduceLength, string.length());
+	}
+
+	/**
+	 * 计算最大公约数
+	 *
+	 * @param width  要裁剪的宽度
+	 * @param height 要裁剪的高度
+	 * @return 宽高之比
+	 */
+	private int maxCommonDivisor(int width, int height) {
+		if (width < height) {// 保证m>n,若m<n,则进行数据交换
+			int temp = width;
+			width = height;
+			height = temp;
+		}
+		if (width % height == 0) {// 若余数为0,返回最大公约数
+			return height;
+		} else { // 否则,进行递归,把n赋给m,把余数赋给n
+			return maxCommonDivisor(height, width % height);
+		}
+	}
+
+	/**
+	 * 显示相机使用提示，如果不是第一次使用，则不显示
+	 */
+	private boolean showCameraTips() {
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(PicturePickerUnity.this);
+		if (sp.getBoolean("isFirstUseCamera", true)) {
+			final AlertDialog.Builder builder = new AlertDialog.Builder(PicturePickerUnity.this);
+			builder.setMessage(getString(R.string.cameraTips));
+			builder.setCancelable(false);
+			builder.setPositiveButton(R.string.simple_done, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(PicturePickerUnity.this).edit();
+					editor.putBoolean("isFirstUseCamera", false);
+					editor.apply();
+
+					dialog.dismiss();
+				}
+			});
+			builder.show();
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/**
