@@ -53,7 +53,10 @@ import java.util.Random;
  * 图像选择工具
  */
 
-public class PicturePickerUnity extends AppCompatActivity implements FileObjectAdapter.OnFileItemClickCallback, Scanner.ScannerResultCallback, View.OnClickListener {
+public class PicturePickerUnity extends AppCompatActivity
+		implements FileObjectAdapter.OnFileItemClickCallback,
+		Scanner.ScannerResultCallback,
+		View.OnClickListener {
 
 	/**
 	 * 结果参数字段
