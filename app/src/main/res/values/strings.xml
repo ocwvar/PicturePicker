@@ -5,10 +5,6 @@
     <string name="simple_done">我知道了</string>
     <string name="simple_loading">正在处理中…</string>
 
-    <string name="selector_from_Local">从本地图库选择</string>
-    <string name="selector_from_Camera">从照相机获取</string>
-    <string name="switcher_fix_angle">图像旋转修正，在某些型号三星手机拍摄出的图像会被系统进行旋转，选取此选项进行修正。</string>
-
     <string name="cameraTips">考虑到系统兼容性，请您使用系统自带的相机，而非第三方相机APP，以保证数据的兼容性。</string>
 
     <string name="ERROR_TEXT_COMPRESS_FILED">压缩储存失败,无法返回带压缩请求的位图和文件.</string>
@@ -37,7 +33,6 @@
     <string name="RECENT">最近图像</string>
     <string name="MAIN">储存设备</string>
     <string name="EXStorage">外置储存</string>
-    <string name="INStorage">内置储存</string>
     <string name="NOUP">无上一级</string>
     <string name="CURRENT">当前路径：</string>
 

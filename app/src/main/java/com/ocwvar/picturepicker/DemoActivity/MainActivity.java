@@ -99,9 +99,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				.setCompressValue(compressValue)
 				.setCropHeight(cropHeight)
 				.setCropWidth(cropWidth)
-				.setFileSavePathAndName(Environment.getExternalStorageDirectory() + "/PickerTest", "Test" + String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
+				.setFileSavePathAndName(Environment.getExternalStorageDirectory() + "/PickerTest", "Test" + String.valueOf(new Random(System.currentTimeMillis()).nextInt())+".jpg")
 				.startPickerNow_ACTIVITY(MainActivity.this, 8, 1);
-
 
 	}
 
