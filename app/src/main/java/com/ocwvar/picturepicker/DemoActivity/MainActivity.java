@@ -23,8 +23,8 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 	EditText getWidth, getHeight, getCompress;
-	CheckBox needCrop, needCompress;
-	RadioButton fileOnly, bitmapOnly, both;
+    CheckBox needCrop, needCompress, enableCamera, enable3rdGallery;
+    RadioButton fileOnly, bitmapOnly, both;
 
 	ImageView imageView;
 	TextView textView;
@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 		needCrop = (CheckBox) findViewById(R.id.isCrop);
 		needCompress = (CheckBox) findViewById(R.id.isCompress);
+        enableCamera = (CheckBox) findViewById(R.id.enableCamera);
+        enable3rdGallery = (CheckBox) findViewById(R.id.enableGallery);
 
 		fileOnly = (RadioButton) findViewById(R.id.returnFile);
 		bitmapOnly = (RadioButton) findViewById(R.id.returnBitmap);
@@ -99,8 +101,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 				.setCompressValue(compressValue)
 				.setCropHeight(cropHeight)
 				.setCropWidth(cropWidth)
-				.setFileSavePathAndName(Environment.getExternalStorageDirectory() + "/PickerTest", "Test" + String.valueOf(new Random(System.currentTimeMillis()).nextInt())+".jpg")
-				.startPickerNow_ACTIVITY(MainActivity.this, 8, 1);
+                .allowUseCamera(enableCamera.isChecked())
+                .allowUse3rdGallery(enable3rdGallery.isChecked())
+                .setFileSavePathAndName(Environment.getExternalStorageDirectory() + "/PickerTest", "Test" + String.valueOf(new Random(System.currentTimeMillis()).nextInt()) + ".jpg")
+                .startPickerNow_ACTIVITY(MainActivity.this, 8, 1);
 
 	}
 

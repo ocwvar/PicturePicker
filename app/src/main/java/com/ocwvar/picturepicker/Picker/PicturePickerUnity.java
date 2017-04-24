@@ -99,8 +99,12 @@ public class PicturePickerUnity extends AppCompatActivity
 	private static final String ARG_SAVE_PATH = "ac9";
 	//保存文件名称
 	private static final String ARG_SAVE_NAME = "ac10";
-	/**
-	 * 内部请求码
+    //是否允许使用相机
+    private static final String ARG_ENABLE_CAMERA = "ac11";
+    //是否允许使用第三方图库
+    private static final String ARG_ENABLE_3RDGALLERY = "ac12";
+    /**
+     * 内部请求码
 	 * <p>
 	 * Inner request code
 	 */
@@ -167,6 +171,9 @@ public class PicturePickerUnity extends AppCompatActivity
 	private boolean RETURN_BOTH = false;
 	private String CUSTOM_SAVE_PATH = null;
 	private String CUSTOM_SAVE_NAME = null;
+    private boolean ENABLE_CAMERA = true;
+    private boolean ENABLE_3RDGALLERY = true;
+
 	/**
 	 * 图像文件保存路径
 	 * <p>
@@ -203,7 +210,9 @@ public class PicturePickerUnity extends AppCompatActivity
 			RETURN_BOTH = request.getBoolean(ARG_RETURN_BOTH, false);
 			CUSTOM_SAVE_PATH = request.getString(ARG_SAVE_PATH, null);
 			CUSTOM_SAVE_NAME = request.getString(ARG_SAVE_NAME, null);
-		}
+            ENABLE_CAMERA = request.getBoolean(ARG_ENABLE_CAMERA, true);
+            ENABLE_3RDGALLERY = request.getBoolean(ARG_ENABLE_3RDGALLERY, true);
+        }
 
 		ERROR_TEXT_COMPRESS_FILED = getString(R.string.ERROR_TEXT_COMPRESS_FILED);
 		ERROR_TEXT_FILE_FILED = getString(R.string.ERROR_TEXT_FILE_FILED);
@@ -236,6 +245,10 @@ public class PicturePickerUnity extends AppCompatActivity
 		recyclerView.setLayoutManager(new GridLayoutManager(PicturePickerUnity.this, 3, GridLayoutManager.VERTICAL, false));
 		recyclerView.setHasFixedSize(true);
 		recyclerView.setAdapter(adapter);
+
+        //设置功能键的启用状态
+        adapter.setOptionOfCamera(ENABLE_CAMERA);
+        adapter.setOptionOfOtherGallery(ENABLE_3RDGALLERY);
 
 		//计算裁剪长宽的最大公约数
 		final int maxCommonDivisor = maxCommonDivisor(CROP_WIDTH, CROP_HEIGHT);
@@ -899,6 +912,9 @@ public class PicturePickerUnity extends AppCompatActivity
 		private String arg_savePath = null;
 		private String arg_saveName = null;
 
+        private boolean enableCamera = true;
+        private boolean enable3rdGallery = true;
+
 		/**
 		 * @param needCrop 是否需要剪裁
 		 * @return 构建器本身
@@ -983,8 +999,29 @@ public class PicturePickerUnity extends AppCompatActivity
 		}
 
 		/**
-		 * 启动图像选择器
-		 *
+         * 是否允许使用相机获取图像
+         * @param enable    是否允许
+         * @return 构建器本身
+         */
+        public Builder allowUseCamera(boolean enable) {
+            this.enableCamera = enable;
+            return this;
+        }
+
+        /**
+         * 是否允许使用第三方图库获取图像（目前裁剪图像依然需要使用第三方图库）
+         *
+         * @param enable 是否允许
+         * @return 构建器本身
+         */
+        public Builder allowUse3rdGallery(boolean enable) {
+            this.enable3rdGallery = enable;
+            return this;
+        }
+
+        /**
+         * 启动图像选择器
+         *
 		 * @param activity              activity 对象
 		 * @param requestCode           请求码
 		 * @param permissionRequestCode 权限请求码
@@ -998,43 +1035,14 @@ public class PicturePickerUnity extends AppCompatActivity
 					//如果系统版本为 Android 6.0+，同时应用的权限不完整，则一次性全部获取
 					activity.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, permissionRequestCode);
 					Toast.makeText(activity, R.string.ERROR_TEXT_PERMISSION, Toast.LENGTH_SHORT).show();
-					return;
+                    return;
 
-				}
+                }
 
-			}
+            }
 
-			if (arg_returnBitmap && arg_returnFile) {
-				arg_returnBoth = true;
-				arg_returnBitmap = false;
-				arg_returnFile = false;
-			}
-
-			if (arg_compressValue > 100) arg_compressValue = 100;
-			if (arg_compressValue < 0) arg_compressValue = 0;
-			if (arg_cropHeight <= 0) arg_cropHeight = 200;
-			if (arg_cropWidth <= 0) arg_cropWidth = 200;
-
-			final Intent request = new Intent(activity, PicturePickerUnity.class);
-			request.putExtra(ARG_NEED_CROP, arg_needCrop);
-			request.putExtra(ARG_NEED_COMPRESS, arg_needCompress);
-
-			request.putExtra(ARG_RETURN_FILE_ONLY, arg_returnFile);
-			request.putExtra(ARG_RETURN_BITMAP_ONLY, arg_returnBitmap);
-			request.putExtra(ARG_RETURN_BOTH, arg_returnBoth);
-
-			request.putExtra(ARG_COMPRESS_VALUE, arg_compressValue);
-			request.putExtra(ARG_CROP_WIDTH, arg_cropWidth);
-			request.putExtra(ARG_CROP_HEIGHT, arg_cropHeight);
-
-			request.putExtra(ARG_SAVE_PATH, arg_savePath);
-			request.putExtra(ARG_SAVE_NAME, arg_saveName);
-
-			resetDefaultValues();
-
-			activity.startActivityForResult(request, requestCode);
-
-		}
+            activity.startActivityForResult(getRequestIntent(activity), requestCode);
+        }
 
 		/**
 		 * 启动图像选择器
@@ -1058,14 +1066,24 @@ public class PicturePickerUnity extends AppCompatActivity
 					//如果系统版本为 Android 6.0+，同时应用的权限不完整，则一次性全部获取
 					fragment.getActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, permissionRequestCode);
 					Toast.makeText(fragment.getContext(), R.string.ERROR_TEXT_PERMISSION, Toast.LENGTH_SHORT).show();
-					return;
+                    return;
 
-				}
+                }
 
-			}
+            }
 
-			if (arg_returnBitmap && arg_returnFile) {
-				arg_returnBoth = true;
+            fragment.startActivityForResult(getRequestIntent(fragment.getContext()), requestCode);
+        }
+
+        /**
+         * 获取携带请求参数的Intent对象
+         *
+         * @param context 可用的Context
+         * @return 携带请求参数的Intent对象
+         */
+        private Intent getRequestIntent(@NonNull Context context) {
+            if (arg_returnBitmap && arg_returnFile) {
+                arg_returnBoth = true;
 				arg_returnBitmap = false;
 				arg_returnFile = false;
 			}
@@ -1073,11 +1091,11 @@ public class PicturePickerUnity extends AppCompatActivity
 			if (arg_compressValue > 100) arg_compressValue = 100;
 			if (arg_compressValue < 0) arg_compressValue = 0;
 			if (arg_cropHeight <= 0) arg_cropHeight = 200;
-			if (arg_cropWidth <= 0) arg_cropWidth = 200;
+            if (arg_cropWidth <= 0) arg_cropWidth = 200;
 
-			final Intent request = new Intent(fragment.getContext(), PicturePickerUnity.class);
-			request.putExtra(ARG_NEED_CROP, arg_needCrop);
-			request.putExtra(ARG_NEED_COMPRESS, arg_needCompress);
+            final Intent request = new Intent(context, PicturePickerUnity.class);
+            request.putExtra(ARG_NEED_CROP, arg_needCrop);
+            request.putExtra(ARG_NEED_COMPRESS, arg_needCompress);
 
 			request.putExtra(ARG_RETURN_FILE_ONLY, arg_returnFile);
 			request.putExtra(ARG_RETURN_BITMAP_ONLY, arg_returnBitmap);
@@ -1088,13 +1106,15 @@ public class PicturePickerUnity extends AppCompatActivity
 			request.putExtra(ARG_CROP_HEIGHT, arg_cropHeight);
 
 			request.putExtra(ARG_SAVE_PATH, arg_savePath);
-			request.putExtra(ARG_SAVE_NAME, arg_saveName);
+            request.putExtra(ARG_SAVE_NAME, arg_saveName);
+
+            request.putExtra(ARG_ENABLE_CAMERA, enableCamera);
+            request.putExtra(ARG_ENABLE_3RDGALLERY, enable3rdGallery);
 
 			resetDefaultValues();
 
-			fragment.startActivityForResult(request, requestCode);
-
-		}
+            return request;
+        }
 
 		/**
 		 * 请求之前恢复默认的参数
@@ -1111,9 +1131,12 @@ public class PicturePickerUnity extends AppCompatActivity
 			this.arg_cropWidth = 200;
 			this.arg_cropHeight = 200;
 
-			this.arg_savePath = null;
-			this.arg_saveName = null;
-		}
+            this.arg_savePath = null;
+            this.arg_saveName = null;
+
+            this.enableCamera = true;
+            this.enable3rdGallery = true;
+        }
 
 	}
 
