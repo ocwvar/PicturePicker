@@ -10,23 +10,25 @@
 
 # 使用方法
 > ### 请求 Request
-new PicturePickerUnity.Builder()<p></p>
-.needCompress( true / false )<p></p>
-.needCrop( true / false )<p></p>
-.returnBitmap( true / false )<p></p>
-.returnFile( true / false )<p></p>
-.returnBoth( true / false )<p></p>
-.setCompressValue( value > 0 )<p></p>
-.setCropHeight( value > 0 )<p></p>
-.setCropWidth(value > 0)<p></p>
-.allowUseCamera( true / false )<p></p>
-.allowUse3rdGallery( true / false )<p></p>
-.setFileSavePathAndName( FolderPath , FileName )<p></p>
-// By Activity <p></p>
-.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);<p></p>
-// By Fragment<p></p>
-.startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);<p></p>
-        
+```
+new PicturePickerUnity.Builder()
+.needCompress( true / false )
+.needCrop( true / false )
+.returnBitmap( true / false )
+.returnFile( true / false )
+.returnBoth( true / false )
+.setCompressValue( value > 0 )
+.setCropHeight( value > 0 )
+.setCropWidth(value > 0)
+.allowUseCamera( true / false )
+.allowUse3rdGallery( true / false )
+.setFileSavePathAndName( FolderPath , FileName )
+// By Activity 
+.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
+// By Fragment
+.startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
+```
+
 > ### 获取结果 Get Result
 在 onActivityResult() 获取到返回的Intent来进行操作
 
