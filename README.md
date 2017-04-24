@@ -1,24 +1,26 @@
-#Android Picture Picker
-#Android图片获取器
-Use to pick a picture from local or camera with crop or compress
+# Android 图片获取器
+### 支持以下功能：
+---
+- 图像化的图像文件浏览选取
+- 最近添加/修改图像浏览
+- 第三方图库选图
+- 第三方相机选图 （由于支持了新的API特性，建议使用系统自带相机进行选图）
+- 图像剪裁（调用第三方图库进行）
 
-可用于从本地图库或摄像头获取图片,同时还可以剪裁和压缩图片
-##
-
-#**使用方法 How to use**
+# **使用方法 How to use**
 > ### 请求 Request
     new PicturePickerUnity.Builder()
-    	.needCompress(needCompress)
-	.needCrop(needCrop)
-	.returnBitmap(bitmapOnly)
-	.returnFile(fileOnly)
-	.returnBoth(both)
-	.setCompressValue(compressValue)
-	.setCropHeight(cropHeight)
-	.setCropWidth(cropWidth)
-        .allowUseCamera(enableCamera.isChecked())
-        .allowUse3rdGallery(enable3rdGallery.isChecked())
-        .setFileSavePathAndName(FolderPath, FileName)
+        .needCompress( true / false )
+	.needCrop( true / false )
+	.returnBitmap( true / false )
+	.returnFile( true / false )
+	.returnBoth( true / false )
+	.setCompressValue( value > 0 )
+	.setCropHeight( value > 0 )
+	.setCropWidth(value > 0)
+        .allowUseCamera( true / false )
+        .allowUse3rdGallery( true / false )
+        .setFileSavePathAndName( FolderPath , FileName )
     	// By Activity 
     	.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
     	// By Fragment
