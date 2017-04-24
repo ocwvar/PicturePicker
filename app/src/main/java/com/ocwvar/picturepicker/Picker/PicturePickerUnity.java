@@ -1100,16 +1100,19 @@ public class PicturePickerUnity extends AppCompatActivity
 		 * 请求之前恢复默认的参数
 		 */
 		private void resetDefaultValues() {
-			arg_needCrop = false;
-			arg_needCompress = false;
+			this.arg_needCrop = false;
+			this.arg_needCompress = false;
 
-			arg_returnFile = true;
-			arg_returnBitmap = false;
-			arg_returnBoth = false;
+			this.arg_returnFile = true;
+			this.arg_returnBitmap = false;
+			this.arg_returnBoth = false;
 
-			arg_compressValue = 60;
-			arg_cropWidth = 200;
-			arg_cropHeight = 200;
+			this.arg_compressValue = 60;
+			this.arg_cropWidth = 200;
+			this.arg_cropHeight = 200;
+
+			this.arg_savePath = null;
+			this.arg_saveName = null;
 		}
 
 	}
