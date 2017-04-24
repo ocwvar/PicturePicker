@@ -12,7 +12,7 @@
 > ### 请求 Request
 ```
 new PicturePickerUnity.Builder()
-      //是否需要压缩图像1~100
+      //是否需要压缩图像
       .needCompress( true / false )
       //是否需要剪裁
       .needCrop( true / false )
@@ -22,12 +22,12 @@ new PicturePickerUnity.Builder()
       .returnFile( true / false )
       //返回图像文件同时也返回位图对象
       .returnBoth( true / false )
-      //设置压缩值
-      .setCompressValue( value > 0 )
+      //设置压缩值：0(最差画质) ~ 100(最好画质)
+      .setCompressValue( Integer >= 0 )
       //设置裁剪输出高度
-      .setCropHeight( value > 0 )
+      .setCropHeight( Integer > 0 )
       //设置裁剪输出宽度
-      .setCropWidth(value > 0)
+      .setCropWidth( Integer > 0)
       //是否允许用户使用相机选图
       .allowUseCamera( true / false )
       //是否允许用户使用第三方图库
@@ -41,15 +41,26 @@ new PicturePickerUnity.Builder()
 ```
 
 > ### 获取结果 Get Result
-在 onActivityResult() 获取到返回的Intent来进行操作
+返回数据可以使用两个参数来提取 文件对象 和 位图对象 ：PicturePickerUnity.EXTRAS_FILE 和 PicturePickerUnity.EXTRAS_BITMAP
+示例代码：
+```
+@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == 8 && data != null) {
+		
+				//获取文件对象
+				final File file = (File) data.getSerializableExtra(**PicturePickerUnity.EXTRAS_FILE**);
 
-<p></p>
-Intent Extras —— EXTRAS_BITMAP(Parcelable) / EXTRAS_FILE(Serializable)
+				//获取位图对象
+				final Bitmap bitmap = data.getParcelableExtra(**PicturePickerUnity.EXTRAS_BITMAP**);
+
+		}
+	}
+```
 
 #**预览 Preview**
 
 由于GIF图像有28MB.. 所以预览不顺畅的时候可以直接下载根目录下的 Preview.gif 来看
-
-Because the GIF file is too big , you may want to download if from root folder
 
 ![](https://github.com/ocwvar/PicturePicker/blob/master/preview.gif)
