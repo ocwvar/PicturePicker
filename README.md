@@ -43,8 +43,8 @@ new PicturePickerUnity.Builder()
 > ### 获取结果 Get Result
 返回数据可以使用两个参数来提取：
 
-- SerializableExtra :PicturePickerUnity.EXTRAS_FILE (File类型)
-- ParcelableExtra   :PicturePickerUnity.EXTRAS_BITMAP (Bitmap类型)
+- SerializableExtra :PicturePickerUnity.EXTRAS_FILE     (File类型)
+- ParcelableExtra   :PicturePickerUnity.EXTRAS_BITMAP   (Bitmap类型)
 
 示例代码：
 ```
