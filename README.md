@@ -7,24 +7,25 @@
 - 第三方相机选图 （由于支持了新的API特性，建议使用系统自带相机进行选图）
 - 图像剪裁（调用第三方图库进行）
 
-# **使用方法 How to use**
-> ### 请求 Request
-    new PicturePickerUnity.Builder()
-        .needCompress( true / false )
-	.needCrop( true / false )
-	.returnBitmap( true / false )
-	.returnFile( true / false )
-	.returnBoth( true / false )
-	.setCompressValue( value > 0 )
-	.setCropHeight( value > 0 )
-	.setCropWidth(value > 0)
-        .allowUseCamera( true / false )
-        .allowUse3rdGallery( true / false )
-        .setFileSavePathAndName( FolderPath , FileName )
-    	// By Activity 
-    	.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
-    	// By Fragment
-    	.startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
+# 使用方法
+---
+### 请求 Request
+> new PicturePickerUnity.Builder()
+.needCompress( true / false )
+.needCrop( true / false )
+.returnBitmap( true / false )
+.returnFile( true / false )
+.returnBoth( true / false )
+.setCompressValue( value > 0 )
+.setCropHeight( value > 0 )
+.setCropWidth(value > 0)
+.allowUseCamera( true / false )
+.allowUse3rdGallery( true / false )
+.setFileSavePathAndName( FolderPath , FileName )
+// By Activity 
+.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
+// By Fragment
+.startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
         
 > ### 获取结果 Get Result
 在 onActivityResult() 获取到返回的Intent来进行操作
