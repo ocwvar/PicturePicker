@@ -43,19 +43,19 @@ new PicturePickerUnity.Builder()
 > ### 获取结果 Get Result
 返回数据可以使用两个参数来提取：
 
-- SerializableExtra ：PicturePickerUnity.EXTRAS_FILE (File类型)
-- ParcelableExtra   ：PicturePickerUnity.EXTRAS_BITMAP (Bitmap类型)
+- SerializableExtra :PicturePickerUnity.EXTRAS_FILE (File类型)
+- ParcelableExtra   :PicturePickerUnity.EXTRAS_BITMAP (Bitmap类型)
 
 示例代码：
 ```
 @Override
 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	super.onActivityResult(requestCode, resultCode, data);
-	if (requestCode == 8 && data != null) {
+	if (data != null) {
 		//获取文件对象
-		final File file = (File) data.getSerializableExtra(**PicturePickerUnity.EXTRAS_FILE**);
+		final File file = (File) data.getSerializableExtra(PicturePickerUnity.EXTRAS_FILE);
 		//获取位图对象
-		final Bitmap bitmap = data.getParcelableExtra(**PicturePickerUnity.EXTRAS_BITMAP**);
+		final Bitmap bitmap = data.getParcelableExtra(PicturePickerUnity.EXTRAS_BITMAP);
 	}
 }
 ```
