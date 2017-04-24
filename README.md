@@ -1,16 +1,16 @@
 # Android 图片获取器
 ### 支持以下功能：
----
 - 图像化的图像文件浏览选取
 - 最近添加/修改图像浏览
 - 第三方图库选图
 - 第三方相机选图 （由于支持了新的API特性，建议使用系统自带相机进行选图）
 - 图像剪裁（调用第三方图库进行）
+- 图像压缩
+- 可同时/分别返回图像文件对象和位图对象 (由于Bitmap大于1MB时无法通过Intent传输，所以当Bitmap大于限制时则会产生异常)
 
 # 使用方法
----
 ### 请求 Request
-> new PicturePickerUnity.Builder()
+new PicturePickerUnity.Builder()
 .needCompress( true / false )
 .needCrop( true / false )
 .returnBitmap( true / false )
