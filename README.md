@@ -12,21 +12,32 @@
 > ### 请求 Request
 ```
 new PicturePickerUnity.Builder()
-.needCompress( true / false )
-.needCrop( true / false )
-.returnBitmap( true / false )
-.returnFile( true / false )
-.returnBoth( true / false )
-.setCompressValue( value > 0 )
-.setCropHeight( value > 0 )
-.setCropWidth(value > 0)
-.allowUseCamera( true / false )
-.allowUse3rdGallery( true / false )
-.setFileSavePathAndName( FolderPath , FileName )
-// By Activity 
-.startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
-// By Fragment
-.startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
+      //是否需要压缩图像1~100
+      .needCompress( true / false )
+      //是否需要剪裁
+      .needCrop( true / false )
+      //只返回位图对象
+      .returnBitmap( true / false )
+      //只返回图像文件对象
+      .returnFile( true / false )
+      //返回图像文件同时也返回位图对象
+      .returnBoth( true / false )
+      //设置压缩值
+      .setCompressValue( value > 0 )
+      //设置裁剪输出高度
+      .setCropHeight( value > 0 )
+      //设置裁剪输出宽度
+      .setCropWidth(value > 0)
+      //是否允许用户使用相机选图
+      .allowUseCamera( true / false )
+      //是否允许用户使用第三方图库
+      .allowUse3rdGallery( true / false )
+      //设置图像文件储存位置
+      .setFileSavePathAndName( FolderPath , FileName )
+      //从Activity启动选图界面
+      .startPickerNow_ACTIVITY(RequestActivity , requestCode, permissionRequestCode);
+      //从Fragment启动选图界面
+      .startPickerNow_FRAGMENT(RequestFragment , requestCode, permissionRequestCode);
 ```
 
 > ### 获取结果 Get Result
